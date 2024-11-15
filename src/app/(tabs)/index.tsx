@@ -5,8 +5,11 @@ import { Button } from "@/components/common/Button";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { SafeAreaView } from "react-native-safe-area-context";
+import StyledInput from "@/components/common/InputField";
+import { useState } from "react";
 
 export default function HomeScreen() {
+  const [phone, setPhone] = useState<string>("");
   return (
     <SafeAreaView style={styles.container}>
       <ThemedText type="titleLarge" style={{ marginBottom: 8 }}>
@@ -20,7 +23,7 @@ export default function HomeScreen() {
         <Button variant="filled" onPress={() => {}}>
           Open Developer Tools
         </Button>
-      </ThemedView>
+      </ThemedView> */}
     </SafeAreaView>
   );
 }
