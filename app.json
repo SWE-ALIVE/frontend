@@ -32,7 +32,13 @@
         "expo-font",
         {
           "fonts": [
-            "./src/assets/fonts/Pretendard-Regular.otf"
+            "./src/assets/fonts/Pretendard-Regular.otf",
+            "./src/assets/fonts/LGEIHeadlineTTF-Bold.ttf",
+            "./src/assets/fonts/LGEIHeadlineTTF-Light.ttf",
+            "./src/assets/fonts/LGEIHeadlineTTF-Regular.ttf",
+            "./src/assets/fonts/LGEITextTTF-Bold.ttf",
+            "./src/assets/fonts/LGEITextTTF-Light.ttf",
+            "./src/assets/fonts/LGEITextTTF-Regular.ttf"
           ]
         }
       ]

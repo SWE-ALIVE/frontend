@@ -11,11 +11,13 @@ export function ThemedText({
   ...rest
 }: ThemedTextProps) {
   const themedColor = useThemeColor("text");
+  const boldFontFamily =
+    bold && type.startsWith("title") ? "LGEIHeadline-Bold" : "LGEIText-Bold";
   return (
     <Text
       style={[
         { color: color || themedColor },
-        { fontFamily: bold ? "Pretendard-Bold" : "Pretendard-Regular" },
+        { fontFamily: bold ? boldFontFamily : "LGEIText-Regular" },
         { ...typography[type] },
         style,
       ]}

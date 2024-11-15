@@ -1,10 +1,15 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React from "react";
 
+import { AppBar } from "@/components/common/AppBar";
 import { ThemedText } from "@/components/common/ThemedText";
 import AnalysisIcon from "@/components/icons/Analysis";
+import BellIcon from "@/components/icons/Bell";
 import HomeIcon from "@/components/icons/Home";
+import MoreVerticalIcon from "@/components/icons/MoreVertical";
+import PlusIcon from "@/components/icons/Plus";
 import ProfileIcon from "@/components/icons/Profile";
+import SyncIcon from "@/components/icons/Sync";
 import WalletIcon from "@/components/icons/Wallet";
 import { Colors } from "@/constants/colors.constant";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -22,12 +27,12 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const activeColor = Colors[colorScheme ?? "light"].tint;
   const inactiveColor = "#9DB2CE";
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: activeColor,
         tabBarInactiveTintColor: inactiveColor,
-        headerShown: false,
         tabBarStyle: {
           height: 96,
           paddingTop: 16,
@@ -47,14 +52,84 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <HomeIcon color={color} width={24} height={24} />
           ),
+          header: () => (
+            <AppBar
+              title="LG MACS"
+              align="left"
+              rightIcons={[
+                {
+                  icon: (
+                    <PlusIcon
+                      width={24}
+                      height={24}
+                      color={Colors.light.text}
+                      strokeWidth={1}
+                    />
+                  ),
+                  onPress: () => console.log("Search"),
+                },
+                {
+                  icon: (
+                    <BellIcon
+                      width={24}
+                      height={24}
+                      color={Colors.light.text}
+                      strokeWidth={1}
+                    />
+                  ),
+                  onPress: () => console.log("Search"),
+                },
+                {
+                  icon: (
+                    <MoreVerticalIcon
+                      width={24}
+                      height={24}
+                      color={Colors.light.text}
+                      strokeWidth={1}
+                    />
+                  ),
+                  onPress: () => console.log("Search"),
+                },
+              ]}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="list"
         options={{
-          title: "목록",
+          title: "",
           tabBarIcon: ({ color }) => (
             <WalletIcon color={color} width={24} height={24} />
+          ),
+          header: () => (
+            <AppBar
+              align="left"
+              rightIcons={[
+                {
+                  icon: (
+                    <SyncIcon
+                      width={24}
+                      height={24}
+                      color={Colors.light.text}
+                      strokeWidth={1}
+                    />
+                  ),
+                  onPress: () => console.log("Search"),
+                },
+                {
+                  icon: (
+                    <PlusIcon
+                      width={24}
+                      height={24}
+                      color={Colors.light.text}
+                      strokeWidth={1}
+                    />
+                  ),
+                  onPress: () => console.log("Search"),
+                },
+              ]}
+            />
           ),
         }}
       />
@@ -65,6 +140,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <AnalysisIcon color={color} width={24} height={24} />
           ),
+          header: () => <AppBar />,
         }}
       />
       <Tabs.Screen
@@ -74,6 +150,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <ProfileIcon color={color} width={24} height={24} />
           ),
+          header: () => <AppBar />,
         }}
       />
     </Tabs>
