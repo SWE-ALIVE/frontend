@@ -16,8 +16,13 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    "Pretendard-Regular": require("../assets/fonts/Pretendard-Regular.otf"),
-    "Pretendard-Bold": require("../assets/fonts/Pretendard-Bold.otf"),
+    "LGEIHeadline-Bold": require("../assets/fonts/LGEIHeadlineTTF-Bold.ttf"),
+    "LGEIHeadline-SemiBold": require("../assets/fonts/LGEIHeadlineTTF-Semibold.ttf"),
+    "LGEIHeadline-Regular": require("../assets/fonts/LGEIHeadlineTTF-Regular.ttf"),
+    "LGEIHeadline-Light": require("../assets/fonts/LGEIHeadlineTTF-Light.ttf"),
+    "LGEIText-Bold": require("../assets/fonts/LGEITextTTF-Bold.ttf"),
+    "LGEIText-Regular": require("../assets/fonts/LGEITextTTF-Regular.ttf"),
+    "LGEIText-Light": require("../assets/fonts/LGEITextTTF-Light.ttf"),
   });
 
   useEffect(() => {

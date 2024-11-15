@@ -9,13 +9,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <ThemedText type="title1" style={{ marginBottom: 8 }}>
+      <ThemedText type="titleLarge" style={{ marginBottom: 8 }}>
         포리프 리액트 네이티브 템플릿입니다.
       </ThemedText>
       <ThemedView>
-        <ThemedText type="title1" style={{ marginBottom: 16 }}>
-          볼드체를 사용하기 위해서는 <Bold type="title1">볼드 컴포넌트</Bold>를
-          사용하세요.
+        <ThemedText type="titleLarge" style={{ marginBottom: 16 }}>
+          볼드체를 사용하기 위해서는{" "}
+          <Bold type="titleLarge">볼드 컴포넌트</Bold>를 사용하세요.
         </ThemedText>
         <Button variant="filled" onPress={() => {}}>
           Open Developer Tools
