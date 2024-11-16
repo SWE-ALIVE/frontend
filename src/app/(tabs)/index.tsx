@@ -12,10 +12,22 @@ export default function HomeScreen() {
   const [phone, setPhone] = useState<string>("");
   return (
     <SafeAreaView style={styles.container}>
-      <ThemedText type="titleLarge" style={{ marginBottom: 8 }}>
-        포리프 리액트 네이티브 템플릿입니다.
-      </ThemedText>
-      <ThemedView>
+      <StyledInput
+        label="전화번호"
+        value={phone}
+        onChangeText={setPhone}
+        type="decimal-pad"
+        validation={(text) => /^\d{0,11}$/.test(text)}
+        placeholder="전화번호를 입력하세요"
+      />
+      <StyledInput
+        label="비밀번호"
+        value={phone}
+        onChangeText={setPhone}
+        validation={(text) => /^\d{0,11}$/.test(text)}
+        placeholder="비밀번호를 입력하세요"
+      />
+      {/* <ThemedView>
         <ThemedText type="titleLarge" style={{ marginBottom: 16 }}>
           볼드체를 사용하기 위해서는{" "}
           <Bold type="titleLarge">볼드 컴포넌트</Bold>를 사용하세요.

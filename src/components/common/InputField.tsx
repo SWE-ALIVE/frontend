@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/colors.constant";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -7,6 +8,8 @@ import {
   Text,
   Animated,
 } from "react-native";
+import { ThemedView } from "./ThemedView";
+import { ThemedText } from "./ThemedText";
 
 type InputPadTypes = "decimal-pad" | "default";
 
@@ -16,6 +19,8 @@ interface StyledInputProps extends TextInputProps {
   type?: InputPadTypes;
   label?: string;
   validation?: (value: string) => boolean;
+  secureTextEntry?: boolean;
+  error?: boolean;
 }
 
 export default function StyledInput({
@@ -24,6 +29,9 @@ export default function StyledInput({
   type = "default",
   label,
   validation = () => true,
+  secureTextEntry = false,
+  error = false,
+
   ...props
 }: StyledInputProps) {
   const [isFocused, setIsFocused] = useState(false);
@@ -47,20 +55,32 @@ export default function StyledInput({
   };
 
   const handleChangeText = (text: string) => {
+    // decimal-pad 타입일 경우 숫자만 허용
+    if (type === "decimal-pad") {
+      // 숫자가 아닌 문자가 있으면 업데이트하지 않음
+      if (!/^\d*$/.test(text)) {
+        return;
+      }
+    }
+
     setIsValid(validation(text));
     onChangeText?.(text);
   };
 
   const getBorderColor = () => {
-    if (!isValid) return "#EF4444";
-    if (!value) return "#D1D5DB";
-    if (isFocused) return "#000000";
-    return "#040404";
+    if (error) return Colors.light.tint;
+    if (isFocused) return Colors.light.black;
+    if (!value) return Colors.light.lightGray;
+    return Colors.light.black;
   };
 
   return (
-    <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+    <ThemedView style={styles.container}>
+      {label && (
+        <ThemedText type="footnote" style={styles.label}>
+          {label}
+        </ThemedText>
+      )}
       <Animated.View style={{ height: animatedHeight }}>
         <TextInput
           style={[styles.input, { borderBottomColor: getBorderColor() }]}
@@ -68,18 +88,17 @@ export default function StyledInput({
           onChangeText={handleChangeText}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          secureTextEntry={secureTextEntry}
           keyboardType={type}
           {...props}
         />
       </Animated.View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
+  container: {},
   label: {
     fontSize: 14,
     marginBottom: 8,
@@ -88,7 +107,8 @@ const styles = StyleSheet.create({
   input: {
     height: "100%",
     borderWidth: 0,
-    borderBottomWidth: 2,
-    padding: 10,
+    borderBottomWidth: 1,
+    fontSize: 13,
+    lineHeight: 18,
   },
 });
