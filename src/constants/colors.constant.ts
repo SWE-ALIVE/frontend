@@ -13,6 +13,8 @@ export const Colors = {
     disabled: "#A9A9A9",
     tabIconSelected: tintColorLight,
     black: "#000000",
+    textDisabled: "#CACACA",
+    buttonDisabled: "#EDEDED",
   },
   dark: {
     text: "#ECEDEE",

@@ -1,13 +1,6 @@
 import { Colors } from "@/constants/colors.constant";
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  TextInput,
-  TextInputProps,
-  View,
-  Text,
-  Animated,
-} from "react-native";
+import { StyleSheet, TextInput, TextInputProps, Animated } from "react-native";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 
