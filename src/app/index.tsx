@@ -31,6 +31,13 @@ export default function HomeScreen() {
   const [loginError, setLoginError] = useState(false);
   const router = useRouter();
 
+  // const testLoginData: LoginResponse = {
+  //   id: "user_123",
+  //   name: "홍길동",
+  //   birth_date: "1990-01-01",
+  //   phone_number: "010-1234-5678",
+  // };
+
   const formatPhoneNumber = (number: string): string => {
     const cleaned = number.replace(/\D/g, "");
     const match = cleaned.match(/^(\d{3})(\d{4})(\d{4})$/);
@@ -42,8 +49,11 @@ export default function HomeScreen() {
 
   const loginMutation = useLogin();
   const setUser = useUserStore((state) => state.setUser);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
   const handleLogin = () => {
+    // setUser(testLoginData);
+    router.push("/(tabs)");
     loginMutation.mutate(
       {
         phone_number: formatPhoneNumber(phone.val),
@@ -80,6 +90,16 @@ export default function HomeScreen() {
     if (passwordError && password.val.length != password.prev.length)
       setPasswordError(false);
   }, [phone.val, password.val]);
+
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     const redirect = setTimeout(() => {
+  //       router.push("/(tabs)");
+  //     }, 0);
+
+  //     return () => clearTimeout(redirect);
+  //   }
+  // }, [isLoggedIn]);
 
   return (
     <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
@@ -137,13 +157,18 @@ export default function HomeScreen() {
             />
           </ThemedView>
           <ThemedView>
-            {(phoneError || passwordError || loginError) && (
+            {phoneError || passwordError || loginError ? (
               <ThemedText
                 type="caption2"
-                style={{ marginTop: 24, color: Colors.light.tint }}
+                style={{ marginTop: 16, color: Colors.light.tint }}
               >
                 {"아이디 또는 비밀번호를 다시 확인해주세요."}
               </ThemedText>
+            ) : (
+              <ThemedText
+                type="caption2"
+                style={{ marginTop: 16, color: Colors.light.tint }}
+              ></ThemedText>
             )}
           </ThemedView>
         </ThemedView>
@@ -151,7 +176,8 @@ export default function HomeScreen() {
         <ThemedView
           style={{
             flexDirection: "row",
-            marginTop: 40,
+            marginTop: 28,
+            marginBottom: 40,
             justifyContent: "center",
           }}
         >
@@ -159,7 +185,7 @@ export default function HomeScreen() {
           <ThemedText style={styles.settingText}> | </ThemedText>
           <ThemedText style={styles.settingText}>비밀번호 재설정</ThemedText>
         </ThemedView>
-        <ThemedView style={{ marginTop: 40 }}>
+        <ThemedView>
           <Button
             variant={
               phone.val.length != 11 ||
