@@ -17,7 +17,7 @@ export function AppBar({
   leftIcon,
   rightIcons = [],
 }: AppBarProps) {
-  const noLeftAndTitle = !leftIcon && !title; // 조건 체크
+  const noLeftAndTitle = !leftIcon && !title;
 
   return (
     <SafeAreaView edges={["top"]} style={{ backgroundColor: "#fff" }}>
@@ -29,7 +29,7 @@ export function AppBar({
         )}
         {title && (
           <ThemedText
-            type={"title3"}
+            type={"headline"}
             bold
             style={[align === "center" ? styles.center : styles.left]}
           >
