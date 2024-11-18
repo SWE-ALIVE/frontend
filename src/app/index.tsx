@@ -14,6 +14,7 @@ import LangToggleComp from "@/components/login/toggle";
 import { Keyboard, Pressable } from "react-native";
 import { useLogin } from "@/hooks/useLogin";
 import { useUserStore } from "@/stores/useUserStore";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const [phone, setPhone] = useState({
@@ -28,6 +29,7 @@ export default function HomeScreen() {
   const [phoneError, setPhoneError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [loginError, setLoginError] = useState(false);
+  const router = useRouter();
 
   const formatPhoneNumber = (number: string): string => {
     const cleaned = number.replace(/\D/g, "");
@@ -51,6 +53,7 @@ export default function HomeScreen() {
         onSuccess: (data) => {
           if (data) {
             setUser(data);
+            router.push("/(tabs)");
           }
         },
         onError: (error) => {
