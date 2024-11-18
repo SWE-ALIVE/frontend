@@ -6,8 +6,9 @@ import {
   TouchableOpacityProps,
 } from "react-native";
 import { ThemedText } from "./ThemedText";
+import { Colors } from "@/constants/colors.constant";
 
-type ButtonVariants = "outlined" | "filled" | "text";
+type ButtonVariants = "outlined" | "filled" | "text" | "disabled";
 
 type ButtonProps = {
   children: ReactNode;
@@ -23,7 +24,6 @@ export const Button = ({
 }: ButtonProps) => {
   const background = useThemeColor("background");
   const tint = useThemeColor("tint");
-  const disabledColor = useThemeColor("disabled");
 
   const getVariantStyles = () => {
     switch (variant) {
@@ -37,6 +37,10 @@ export const Button = ({
         return {
           backgroundColor: "transparent",
         };
+      case "disabled":
+        return {
+          backgroundColor: Colors.light.buttonDisabled,
+        };
       case "filled":
       default:
         return {
@@ -45,25 +49,34 @@ export const Button = ({
     }
   };
 
-  const textColor = variant === "filled" ? background : tint;
-
+  const getTextColor = () => {
+    switch (variant) {
+      case "outlined":
+        return {
+          color: tint,
+        };
+      case "text":
+        return {
+          color: tint,
+        };
+      case "disabled":
+        return {
+          color: Colors.light.textDisabled,
+        };
+      case "filled":
+      default:
+        return {
+          color: background,
+        };
+    }
+  };
   return (
     <TouchableOpacity
-      style={[
-        styles.common,
-        getVariantStyles(),
-        disabled && {
-          opacity: 0.4,
-        },
-      ]}
+      style={[styles.common, getVariantStyles()]}
       disabled={disabled}
       {...props}
     >
-      <ThemedText
-        type="headline"
-        disabled={disabled}
-        style={{ color: textColor }}
-      >
+      <ThemedText type="headline" disabled={disabled} style={getTextColor()}>
         {children}
       </ThemedText>
     </TouchableOpacity>

@@ -10,6 +10,8 @@ npm-debug.*
 *.orig.*
 web-build/
 
+
+.yarn/
 # macOS
 .DS_Store
 
