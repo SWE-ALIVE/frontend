@@ -12,12 +12,18 @@ export interface Message {
   user: User;
 }
 
+export interface MessageBody {
+  channel_id: string;
+  message: string;
+  user_id: string;
+}
+
 export interface User {
   user_id: string;
   profile_url: string;
   require_auth_for_profile_image: boolean;
   nickname: string;
-  role: "operator" | null;
+  role: "operator" | {};
   is_active: boolean;
 }
 

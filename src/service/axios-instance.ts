@@ -7,4 +7,9 @@ const instance = axios.create({
   timeout: 20000,
 });
 
-export { instance };
+const sendbird_instance = axios.create({
+  baseURL: `${BASE_URL}/api/sendbird/`,
+  timeout: 20000,
+});
+
+export { instance, sendbird_instance };

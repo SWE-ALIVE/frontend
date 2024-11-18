@@ -1,35 +1,38 @@
-import { Chat } from "@/types/chat";
+import { Message } from "@/types/chat";
 import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { ChatBubble } from "./ChatBubble";
 
 interface ChatContainerProps {
-  chats: Chat[];
+  messages: Message[];
 }
 
-const ChatContainer = ({ chats }: ChatContainerProps) => {
-  const renderItem = ({ item }: { item: Chat }) => (
-    <View
-      style={[
-        styles.chatBubbleContainer,
-        item.isUser ? styles.userBubble : styles.otherBubble,
-      ]}
-    >
-      {!item.isUser && (
-        <ThemedText type="subhead" style={{ marginBottom: 4 }}>
-          {item.senderName}
-        </ThemedText>
-      )}
-      <ChatBubble {...item} />
-    </View>
-  );
+const ChatContainer = ({ messages }: ChatContainerProps) => {
+  const renderItem = ({ item }: { item: Message }) => {
+    const isUser = item.user.role === "operator";
+    return (
+      <View
+        style={[
+          styles.chatBubbleContainer,
+          isUser ? styles.userBubble : styles.otherBubble,
+        ]}
+      >
+        {!isUser && (
+          <ThemedText type="subhead" style={{ marginBottom: 4 }}>
+            {item.user.nickname}
+          </ThemedText>
+        )}
+        <ChatBubble {...item} />
+      </View>
+    );
+  };
 
   return (
     <FlatList
-      data={chats}
+      data={messages}
       renderItem={renderItem}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(message) => message.message_id.toString()}
       contentContainerStyle={styles.container}
     />
   );

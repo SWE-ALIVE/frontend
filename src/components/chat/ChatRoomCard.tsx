@@ -1,35 +1,18 @@
 import { Colors } from "@/constants/colors.constant";
+import { Channel } from "@/service/channel.service";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { Image, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { ThemedView } from "../common/ThemedView";
-interface ChatRoomCardProps {
-  uuid: string;
-  icon: ImageSourcePropType;
-  name: string;
-  latestMessage: string;
-  lastMessageTime: Date;
-  unReadMessageCount: number;
-}
 
-export const ChatRoomCard = ({
-  uuid,
-  icon,
-  name,
-  latestMessage,
-  lastMessageTime,
-  unReadMessageCount,
-}: ChatRoomCardProps) => {
-  const router = useRouter(); // Hook for navigation
+export const ChatRoomCard = (channel: Channel) => {
+  const { channel_url, cover_url, name, last_message, unread_message_count } =
+    channel;
+  const router = useRouter();
 
   const handlePress = () => {
-    router.push(`/chat/${uuid}`); // Navigate to the chat room
+    router.push(`/chat/${channel_url}`);
   };
 
   return (
@@ -39,21 +22,21 @@ export const ChatRoomCard = ({
           style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
         >
           <Image
-            source={icon}
+            source={{ uri: cover_url }}
             style={[styles.icon, { backgroundColor: Colors.light.tint }]}
           />
           <ThemedView>
             <ThemedText type="callout">{name}</ThemedText>
-            <ThemedText type="footnote">{latestMessage}</ThemedText>
+            <ThemedText type="footnote">{last_message.message}</ThemedText>
           </ThemedView>
         </ThemedView>
         <ThemedView
           style={{ flexDirection: "column", alignItems: "flex-end", gap: 4 }}
         >
           <ThemedText type="footnote" color={Colors.light.lowGray}>
-            {dayjs(lastMessageTime).format("HH:mm")}
+            {dayjs(last_message.created_at).format("HH:mm")}
           </ThemedText>
-          {unReadMessageCount > 0 && (
+          {unread_message_count > 0 && (
             <ThemedView
               style={{
                 backgroundColor: Colors.light.tint,
@@ -65,7 +48,7 @@ export const ChatRoomCard = ({
               }}
             >
               <ThemedText type="footnote" style={{ color: "white" }}>
-                {unReadMessageCount}
+                {unread_message_count}
               </ThemedText>
             </ThemedView>
           )}

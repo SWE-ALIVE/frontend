@@ -6,13 +6,20 @@ import { ThemedView } from "@/components/common/ThemedView";
 import BellIcon from "@/components/icons/Bell";
 import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import { Colors } from "@/constants/colors.constant";
-import { Chat } from "@/types/chat";
+import { Message } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
 import { StyleSheet } from "react-native";
 
 export default function ChatScreen() {
   const { uuid } = useLocalSearchParams();
+  const [messages, setMessages] = useState<Message[]>(dummyMessages);
+
+  const appendMessage = (newMessage: Message) => {
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  };
+
   const router = useRouter();
   return (
     <ThemedView style={styles.container}>
@@ -54,8 +61,8 @@ export default function ChatScreen() {
             에어컨, 세탁기, 건조기, TV, 냉장고1, 냉장고2를 초대했습니다.
           </ThemedText>
         </ThemedView>
-        <ChatContainer chats={dummyChats} />
-        <ChatInput />
+        <ChatContainer messages={messages} />
+        <ChatInput appendMessage={appendMessage} />
       </ThemedView>
     </ThemedView>
   );
@@ -83,33 +90,55 @@ const styles = StyleSheet.create({
   },
 });
 
-const dummyChats: Chat[] = [
+const dummyMessages: Message[] = [
   {
-    id: "1",
-    message: "세상에서 가장 빠른 말은?",
-    isUser: true,
-    senderName: "Bae",
-    date: new Date("2023-10-01T10:00:00Z"),
+    type: "MESG",
+    message_id: 7701692633,
+    message: "안방이 좀 어둡네.",
+    created_at: 1731754565120,
+    user: {
+      user_id: "user123",
+      profile_url: "https://example.com/user123.png",
+      require_auth_for_profile_image: false,
+      nickname: "철수",
+      role: "operator",
+      is_active: true,
+    },
+    channel_url: "living_room",
+    mentioned_users: [],
+    mention_type: "users",
+    silent: false,
+    is_op_msg: false,
+    message_events: {
+      send_push_notification: "receivers",
+      update_unread_count: true,
+      update_mention_count: true,
+      update_last_message: true,
+    },
   },
   {
-    id: "2",
-    message: "정답은 주말입니다.",
-    isUser: false,
-    senderName: "세탁기",
-    date: new Date("2023-10-01T10:01:00Z"),
-  },
-  {
-    id: "3",
-    message: "오늘 날씨가 좀 덥네. 어떻게든 해결할 방법이 없을까?",
-    isUser: true,
-    senderName: "Bae",
-    date: new Date("2023-10-01T10:02:00Z"),
-  },
-  {
-    id: "4",
-    message: "지금 에어컨을 가동할까요?",
-    isUser: false,
-    senderName: "에어컨",
-    date: new Date("2023-10-01T10:03:00Z"),
+    type: "MESG",
+    message_id: 7701692634,
+    message: "안방에 있는 전등을 킬까요?",
+    created_at: 1731754566120,
+    user: {
+      user_id: "operator001",
+      profile_url: "",
+      require_auth_for_profile_image: false,
+      nickname: "전등",
+      role: {},
+      is_active: true,
+    },
+    channel_url: "living_room",
+    mentioned_users: [],
+    mention_type: "users",
+    silent: false,
+    is_op_msg: true,
+    message_events: {
+      send_push_notification: "receivers",
+      update_unread_count: true,
+      update_mention_count: true,
+      update_last_message: true,
+    },
   },
 ];

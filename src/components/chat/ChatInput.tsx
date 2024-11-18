@@ -1,60 +1,136 @@
 import { Colors } from "@/constants/colors.constant";
+import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
-import { useState } from "react";
-import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
-import { ThemedView } from "../common/ThemedView";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-export const ChatInput = () => {
-  const [message, setMessage] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
+interface ChatInputProps {
+  appendMessage: (newMessage: Message) => void;
+}
 
-  const isMessageEmpty = message.trim().length === 0 || isFocused;
+export const ChatInput = ({ appendMessage }: ChatInputProps) => {
+  const [message, setMessage] = useState<MessageBody>({
+    message: "",
+    channel_id: "",
+    user_id: "",
+  });
+  const backgroundColorAnim = useRef(new Animated.Value(0)).current;
+  const borderWidthAnim = useRef(new Animated.Value(0)).current;
 
-  const sendMessage = () => {
-    console.log(message);
-    setMessage("");
+  const sendChat = async () => {
+    try {
+      // const res = await sendMessage(message);
+      const exampleMessage: Message = {
+        type: "MESG",
+        message_id: 7701692635,
+        message: message.message,
+        created_at: 1731754566120,
+        user: {
+          user_id: "operator001",
+          profile_url: "",
+          require_auth_for_profile_image: false,
+          nickname: "전등",
+          role: "operator",
+          is_active: true,
+        },
+        channel_url: "living_room",
+        mentioned_users: [],
+        mention_type: "users",
+        silent: false,
+        is_op_msg: true,
+        message_events: {
+          send_push_notification: "receivers",
+          update_unread_count: true,
+          update_mention_count: true,
+          update_last_message: true,
+        },
+      };
+
+      appendMessage(exampleMessage);
+      setMessage((prev) => ({ ...prev, message: "" }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  useEffect(() => {
+    const toValue = message.message === "" ? 0 : 1;
+    Animated.timing(backgroundColorAnim, {
+      toValue,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+    Animated.timing(borderWidthAnim, {
+      toValue: message.message === "" ? 0 : 1,
+      duration: 150,
+      useNativeDriver: false,
+    }).start();
+  }, [message]);
+
+  const backgroundColor = backgroundColorAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#EDEDED", Colors.light.background],
+  });
+
+  const borderWidth = borderWidthAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+
   return (
-    <ThemedView style={styles.container}>
-      <TextInput
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+    <View style={styles.container}>
+      <Animated.View
         style={[
-          styles.input,
+          styles.animatedInputContainer,
           {
-            backgroundColor: isMessageEmpty
-              ? "#EDEDED"
-              : Colors.light.background,
-            color: isMessageEmpty ? "#CACACA" : Colors.light.black,
-            borderWidth: isMessageEmpty ? 0 : 1,
-          },
-        ]}
-        onChangeText={setMessage}
-        value={message}
-        placeholder="메시지를 입력하세요"
-      />
-      <TouchableOpacity
-        onPress={sendMessage}
-        style={[
-          styles.sendButton,
-          {
-            backgroundColor: isMessageEmpty
-              ? Colors.light.background
-              : Colors.light.black,
-            borderColor: isMessageEmpty
-              ? Colors.light.tint
-              : Colors.light.black,
+            backgroundColor,
+            borderWidth,
+            borderColor: "#000",
           },
         ]}
       >
-        {isMessageEmpty ? (
+        <TextInput
+          style={[
+            styles.input,
+            {
+              color: message.message === "" ? "#CACACA" : Colors.light.black,
+            },
+          ]}
+          onChangeText={(text) =>
+            setMessage((prev) => ({ ...prev, message: text }))
+          }
+          value={message.message}
+          placeholder="메시지를 입력하세요"
+          placeholderTextColor="#CACACA"
+        />
+      </Animated.View>
+      <TouchableOpacity
+        onPress={sendChat}
+        style={[
+          styles.sendButton,
+          {
+            backgroundColor:
+              message.message === ""
+                ? Colors.light.background
+                : Colors.light.black,
+            borderColor:
+              message.message === "" ? Colors.light.tint : Colors.light.black,
+          },
+        ]}
+      >
+        {message.message === "" ? (
           <Feather name="mic" size={24} color={Colors.light.tint} />
         ) : (
           <Feather name="arrow-up" size={24} color={Colors.light.background} />
         )}
       </TouchableOpacity>
-    </ThemedView>
+    </View>
   );
 };
 
@@ -64,12 +140,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
   },
-  input: {
+  animatedInputContainer: {
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 32,
-    borderWidth: 1,
+  },
+  input: {
+    flex: 1,
   },
   sendButton: {
     width: 48,
