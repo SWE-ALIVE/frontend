@@ -1,5 +1,4 @@
 import { Image, StyleSheet } from "react-native";
-import { login } from "@/service/auth.service";
 import { Button } from "@/components/common/Button";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
@@ -13,19 +12,21 @@ import KakaoIcon from "@/assets/icons/login/KakaoIcon.png";
 import NaverIcon from "@/assets/icons/login/NaverIcon.png";
 import ToggleComp from "@/components/login/toggle";
 import { Keyboard, Pressable } from "react-native";
+import { useLogin } from "@/hooks/useLogin";
+import { useUserStore } from "@/stores/useUserStore";
 
 export default function HomeScreen() {
   const [phone, setPhone] = useState({
     val: "",
     prev: "",
   });
+
   const [password, setPassword] = useState({
     val: "",
     prev: "",
   });
   const [phoneError, setPhoneError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState(false);
 
   const formatPhoneNumber = (number: string): string => {
@@ -38,44 +39,47 @@ export default function HomeScreen() {
     return number;
   };
 
-  const handleLogin = async () => {
-    setIsLoading(true);
+  const loginMutation = useLogin();
+  const setUser = useUserStore((state) => state.setUser);
 
-    try {
-      const formattedPhone = formatPhoneNumber(phone.val);
-      const response = await login({
-        phone_number: formattedPhone,
+  const handleLogin = () => {
+    loginMutation.mutate(
+      {
+        phone_number: formatPhoneNumber(phone.val),
         password: password.val,
-      });
+      },
+      {
+        onSuccess: (data) => {
+          if (data && data[0]) {
+            setUser(data[0]);
+          }
+          console.log("Login successful:", data);
+        },
+        onError: (error) => {
+          setLoginError(true);
+          setPhoneError(true);
+          setPasswordError(true);
+          setPhone((prevState) => ({
+            val: "",
+            prev: "",
+          }));
+          setPassword((prevState) => ({
+            val: "",
+            prev: "",
+          }));
 
-      // 로그인 성공 처리
-      console.log("Login successful:", response);
-      // TODO: 로그인 성공 후 처리 (토큰 저장, 메인 화면으로 이동)
-    } catch (error) {
-      setLoginError(true);
-      setPhoneError(true);
-      setPasswordError(true);
-      setPhone((prevState) => ({
-        val: "",
-        prev: "",
-      }));
-      setPassword((prevState) => ({
-        val: "",
-        prev: "",
-      }));
-
-      // error log
-      console.error("Login error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+          // // error log
+          // console.error("Login error:", error);
+        },
+      }
+    );
   };
 
   useEffect(() => {
     if (phoneError && phone.val.length != phone.prev.length) {
       setPhoneError(false);
     }
-    if (passwordError && password.val.length != phone.prev.length)
+    if (passwordError && password.val.length != password.prev.length)
       setPasswordError(false);
   }, [phone.val, password.val]);
 
@@ -128,7 +132,6 @@ export default function HomeScreen() {
               onChangeText={(text) =>
                 setPassword((prevState) => ({ ...prevState, val: text }))
               }
-              // validation={(text) => text.length >= 8}
               placeholder="비밀번호를 입력하세요"
               secureTextEntry={true}
               type="default"
@@ -161,12 +164,16 @@ export default function HomeScreen() {
         <ThemedView style={{ marginTop: 40 }}>
           <Button
             variant={
-              phone.val.length != 11 || password.val.length == 0 || isLoading
+              phone.val.length != 11 ||
+              password.val.length == 0 ||
+              loginMutation.isPending
                 ? "disabled"
                 : "filled"
             }
             disabled={
-              phone.val.length != 11 || password.val.length == 0 || isLoading
+              phone.val.length != 11 ||
+              password.val.length == 0 ||
+              loginMutation.isPending
             }
             onPress={handleLogin}
           >
