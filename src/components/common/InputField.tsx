@@ -11,7 +11,7 @@ interface StyledInputProps extends TextInputProps {
   onChangeText?: (text: string) => void;
   type?: InputPadTypes;
   label?: string;
-  validation?: (value: string) => boolean;
+  validate?: (value: string) => boolean;
   secureTextEntry?: boolean;
   error?: boolean;
 }
@@ -21,10 +21,9 @@ export default function StyledInput({
   onChangeText,
   type = "default",
   label,
-  validation = () => true,
+  validate = () => true,
   secureTextEntry = false,
   error = false,
-
   ...props
 }: StyledInputProps) {
   const [isFocused, setIsFocused] = useState(false);
@@ -48,15 +47,12 @@ export default function StyledInput({
   };
 
   const handleChangeText = (text: string) => {
-    // decimal-pad 타입일 경우 숫자만 허용
     if (type === "decimal-pad") {
-      // 숫자가 아닌 문자가 있으면 업데이트하지 않음
       if (!/^\d*$/.test(text)) {
         return;
       }
     }
-
-    setIsValid(validation(text));
+    setIsValid(validate(text));
     onChangeText?.(text);
   };
 

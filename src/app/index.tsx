@@ -10,7 +10,7 @@ import LGIcon from "@/assets/icons/login/LGIcon.png";
 import GoogleIcon from "@/assets/icons/login/GoogleIcon.png";
 import KakaoIcon from "@/assets/icons/login/KakaoIcon.png";
 import NaverIcon from "@/assets/icons/login/NaverIcon.png";
-import ToggleComp from "@/components/login/toggle";
+import LangToggleComp from "@/components/login/toggle";
 import { Keyboard, Pressable } from "react-native";
 import { useLogin } from "@/hooks/useLogin";
 import { useUserStore } from "@/stores/useUserStore";
@@ -30,7 +30,6 @@ export default function HomeScreen() {
   const [loginError, setLoginError] = useState(false);
 
   const formatPhoneNumber = (number: string): string => {
-    // 전화번호 형식으로 변환 (010-1234-5678)
     const cleaned = number.replace(/\D/g, "");
     const match = cleaned.match(/^(\d{3})(\d{4})(\d{4})$/);
     if (match) {
@@ -50,26 +49,22 @@ export default function HomeScreen() {
       },
       {
         onSuccess: (data) => {
-          if (data && data[0]) {
-            setUser(data[0]);
+          if (data) {
+            setUser(data);
           }
-          console.log("Login successful:", data);
         },
         onError: (error) => {
           setLoginError(true);
           setPhoneError(true);
           setPasswordError(true);
-          setPhone((prevState) => ({
+          setPhone({
             val: "",
             prev: "",
-          }));
-          setPassword((prevState) => ({
+          });
+          setPassword({
             val: "",
             prev: "",
-          }));
-
-          // // error log
-          // console.error("Login error:", error);
+          });
         },
       }
     );
@@ -95,7 +90,7 @@ export default function HomeScreen() {
             paddingTop: 20,
           }}
         >
-          <ToggleComp value="Korea, 한국어" />
+          <LangToggleComp value="Korea, 한국어" />
         </ThemedView>
         <ThemedView
           style={{

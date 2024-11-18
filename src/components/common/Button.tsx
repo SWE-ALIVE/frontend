@@ -49,7 +49,6 @@ export const Button = ({
     }
   };
 
-  // const textColor = variant === "filled" ? background : tint;
   const getTextColor = () => {
     switch (variant) {
       case "outlined":

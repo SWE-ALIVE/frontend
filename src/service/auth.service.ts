@@ -5,7 +5,7 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface UserResponse {
+export interface LoginResponse {
   id: string;
   name: string;
   birth_date: string;
@@ -14,7 +14,7 @@ export interface UserResponse {
 
 export const loginApi = async (
   credentials: LoginRequest
-): Promise<UserResponse[]> => {
+): Promise<LoginResponse> => {
   const response = await instance.post("/login", credentials);
   return response.data;
 };
