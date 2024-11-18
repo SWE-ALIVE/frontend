@@ -30,22 +30,6 @@ export default function StyledInput({
   const [isValid, setIsValid] = useState(true);
   const animatedHeight = useState(new Animated.Value(40))[0];
 
-  const handleFocus = () => {
-    setIsFocused(true);
-    Animated.spring(animatedHeight, {
-      toValue: 48,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-    Animated.spring(animatedHeight, {
-      toValue: 40,
-      useNativeDriver: false,
-    }).start();
-  };
-
   const handleChangeText = (text: string) => {
     if (type === "decimal-pad") {
       if (!/^\d*$/.test(text)) {
@@ -75,8 +59,12 @@ export default function StyledInput({
           style={[styles.input, { borderBottomColor: getBorderColor() }]}
           value={value}
           onChangeText={handleChangeText}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
+          onFocus={() => {
+            setIsFocused(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+          }}
           secureTextEntry={secureTextEntry}
           keyboardType={type}
           {...props}
