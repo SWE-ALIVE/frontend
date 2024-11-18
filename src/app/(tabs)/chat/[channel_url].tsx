@@ -6,25 +6,72 @@ import { ThemedView } from "@/components/common/ThemedView";
 import BellIcon from "@/components/icons/Bell";
 import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import { Colors } from "@/constants/colors.constant";
-import { Message } from "@/types/chat";
+import { getMessages, sendMessage } from "@/service/message.service";
+import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
+
+type ChatParams = {
+  channel_url: string;
+  channel_name: string;
+};
 
 export default function ChatScreen() {
-  const { uuid } = useLocalSearchParams();
-  const [messages, setMessages] = useState<Message[]>(dummyMessages);
+  const { channel_url, channel_name } = useLocalSearchParams<ChatParams>();
+
+  const {
+    data: messages,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<Message[]>({
+    queryKey: ["messages", channel_url],
+    queryFn: async () => {
+      const limit = 4;
+      const response = await getMessages({ channel_url, limit });
+      return response.messages;
+    },
+    enabled: !!channel_url,
+  });
+
+  const [message, setMessage] = useState<MessageBody>({
+    message: "",
+    channel_url: "",
+    user_id: "",
+  });
+
+  const mutation = useMutation({
+    mutationFn: (newMessage: MessageBody) => sendMessage(newMessage),
+  });
 
   const appendMessage = (newMessage: Message) => {
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    const newMessageBody: MessageBody = {
+      channel_url: newMessage.channel_url,
+      user_id: newMessage.user.user_id,
+      message: newMessage.message,
+    };
+
+    // Send message to server
+    mutation.mutate(newMessageBody, {
+      onSuccess: () => {
+        refetch(); // Refetch messages on success
+      },
+    });
+
+    // Update local messages immediately
+    if (messages) {
+      messages.push(newMessage);
+    }
   };
 
   const router = useRouter();
   return (
     <ThemedView style={styles.container}>
       <AppBar
-        title={"전체 채팅방"}
+        title={channel_name}
         align="left"
         leftIcon={{
           icon: <Feather name="chevron-left" size={24} color="black" />,
@@ -61,8 +108,28 @@ export default function ChatScreen() {
             에어컨, 세탁기, 건조기, TV, 냉장고1, 냉장고2를 초대했습니다.
           </ThemedText>
         </ThemedView>
-        <ChatContainer messages={messages} />
-        <ChatInput appendMessage={appendMessage} />
+        {messages ? (
+          <ChatContainer messages={messages} />
+        ) : (
+          <View style={{ flex: 1 }} />
+        )}
+        {error && (
+          <ThemedView
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ThemedText type="body">
+              오류가 발생했습니다. 다시 시도해주세요.
+            </ThemedText>
+          </ThemedView>
+        )}
+        <ChatInput
+          message={message}
+          setMessage={setMessage}
+          appendMessage={appendMessage}
+        />
       </ThemedView>
     </ThemedView>
   );

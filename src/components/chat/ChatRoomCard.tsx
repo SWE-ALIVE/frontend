@@ -12,7 +12,10 @@ export const ChatRoomCard = (channel: Channel) => {
   const router = useRouter();
 
   const handlePress = () => {
-    router.push(`/chat/${channel_url}`);
+    router.push({
+      pathname: `/chat/[channel_url]`,
+      params: { channel_url: channel_url, channel_name: name },
+    });
   };
 
   return (

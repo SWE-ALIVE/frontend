@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/colors.constant";
 import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Animated,
   StyleSheet,
@@ -11,15 +11,16 @@ import {
 } from "react-native";
 
 interface ChatInputProps {
+  message: MessageBody;
+  setMessage: React.Dispatch<React.SetStateAction<MessageBody>>;
   appendMessage: (newMessage: Message) => void;
 }
 
-export const ChatInput = ({ appendMessage }: ChatInputProps) => {
-  const [message, setMessage] = useState<MessageBody>({
-    message: "",
-    channel_id: "",
-    user_id: "",
-  });
+export const ChatInput = ({
+  message,
+  setMessage,
+  appendMessage,
+}: ChatInputProps) => {
   const backgroundColorAnim = useRef(new Animated.Value(0)).current;
   const borderWidthAnim = useRef(new Animated.Value(0)).current;
 

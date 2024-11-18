@@ -34,7 +34,7 @@ export default function TabLayout() {
         tabBarStyle: {
           height: 96,
           paddingTop: 16,
-          display: route.name === "chat/[uuid]" ? "none" : "flex",
+          display: route.name === "chat/[channel_url]" ? "none" : "flex",
         },
         tabBarLabel: ({ focused }) =>
           focused ? (
@@ -113,7 +113,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="chat/[uuid]"
+        name="chat/[channel_url]"
         options={{
           href: null,
           headerShown: false,

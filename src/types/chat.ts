@@ -13,7 +13,7 @@ export interface Message {
 }
 
 export interface MessageBody {
-  channel_id: string;
+  channel_url: string;
   message: string;
   user_id: string;
 }
