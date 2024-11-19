@@ -2,7 +2,7 @@ import { Colors } from "@/constants/colors.constant";
 import { Channel } from "@/service/channel.service";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
-import { Image, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { Image, StyleSheet, TouchableHighlight } from "react-native";
 import { ThemedText } from "../common/ThemedText";
 import { ThemedView } from "../common/ThemedView";
 
@@ -19,7 +19,7 @@ export const ChatRoomCard = (channel: Channel) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={handlePress}>
+    <TouchableHighlight underlayColor="#DDDDDD" onPress={handlePress}>
       <ThemedView style={styles.cardContainer}>
         <ThemedView
           style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
@@ -57,7 +57,7 @@ export const ChatRoomCard = (channel: Channel) => {
           )}
         </ThemedView>
       </ThemedView>
-    </TouchableWithoutFeedback>
+    </TouchableHighlight>
   );
 };
 
@@ -65,11 +65,12 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: "row",
     alignItems: "center",
+    paddingVertical: 16,
   },
   icon: {
-    width: 48,
-    height: 48,
-    borderRadius: 999,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     marginRight: 24,
   },
   textContainer: {

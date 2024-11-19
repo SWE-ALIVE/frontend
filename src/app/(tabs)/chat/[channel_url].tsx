@@ -1,4 +1,5 @@
 import ChatContainer from "@/components/chat/ChatContainer";
+import { ChatModal } from "@/components/chat/ChatDrawer";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { AppBar } from "@/components/common/AppBar";
 import { ThemedText } from "@/components/common/ThemedText";
@@ -6,12 +7,13 @@ import { ThemedView } from "@/components/common/ThemedView";
 import BellIcon from "@/components/icons/Bell";
 import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import { Colors } from "@/constants/colors.constant";
-import { getMessages, sendMessage } from "@/service/message.service";
+import { useModal } from "@/hooks/useModal";
+import { sendMessage } from "@/service/message.service";
 import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 type ChatParams = {
@@ -21,17 +23,18 @@ type ChatParams = {
 
 export default function ChatScreen() {
   const { channel_url, channel_name } = useLocalSearchParams<ChatParams>();
-
+  const { isVisible, toggle, close } = useModal();
   const {
     data: messages,
-    isLoading,
     error,
     refetch,
   } = useQuery<Message[]>({
     queryKey: ["messages", channel_url],
     queryFn: async () => {
       const limit = 4;
-      const response = await getMessages({ channel_url, limit });
+      // const response = await getMessages({ channel_url, limit });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response: { messages: Message[] } = { messages: dummyMessages };
       return response.messages;
     },
     enabled: !!channel_url,
@@ -48,24 +51,28 @@ export default function ChatScreen() {
   });
 
   const appendMessage = (newMessage: Message) => {
-    const newMessageBody: MessageBody = {
-      channel_url: newMessage.channel_url,
-      user_id: newMessage.user.user_id,
-      message: newMessage.message,
-    };
+    // const newMessageBody: MessageBody = {
+    //   channel_url: newMessage.channel_url,
+    //   user_id: newMessage.user.user_id,
+    //   message: newMessage.message,
+    // };
 
-    // Send message to server
-    mutation.mutate(newMessageBody, {
-      onSuccess: () => {
-        refetch(); // Refetch messages on success
-      },
-    });
+    // mutation.mutate(newMessageBody, {
+    //   onSuccess: () => {
+    //     refetch();
+    //   },
+    // });
 
-    // Update local messages immediately
     if (messages) {
       messages.push(newMessage);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      toggle();
+    };
+  }, []);
 
   const router = useRouter();
   return (
@@ -98,18 +105,20 @@ export default function ChatScreen() {
                 strokeWidth={1}
               />
             ),
-            onPress: () => console.log("Search"),
+            onPress: toggle,
           },
         ]}
       />
       <ThemedView style={{ paddingHorizontal: 16, flex: 1 }}>
-        <ThemedView style={styles.inviteContainer}>
-          <ThemedText type="body" color={Colors.light.tint}>
-            에어컨, 세탁기, 건조기, TV, 냉장고1, 냉장고2를 초대했습니다.
-          </ThemedText>
-        </ThemedView>
         {messages ? (
-          <ChatContainer messages={messages} />
+          <>
+            <ThemedView style={styles.inviteContainer}>
+              <ThemedText type="body" color={Colors.light.tint}>
+                에어컨, 세탁기, 건조기, TV, 냉장고1, 냉장고2를 초대했습니다.
+              </ThemedText>
+            </ThemedView>
+            <ChatContainer messages={messages} />
+          </>
         ) : (
           <View style={{ flex: 1 }} />
         )}
@@ -131,6 +140,7 @@ export default function ChatScreen() {
           appendMessage={appendMessage}
         />
       </ThemedView>
+      <ChatModal isVisible={isVisible} onClose={close} name={channel_name} />
     </ThemedView>
   );
 }
@@ -167,7 +177,7 @@ const dummyMessages: Message[] = [
       user_id: "user123",
       profile_url: "https://example.com/user123.png",
       require_auth_for_profile_image: false,
-      nickname: "철수",
+      nickname: "준성",
       role: "operator",
       is_active: true,
     },

@@ -11,8 +11,6 @@ import { Channel } from "@/service/channel.service";
 import { Message } from "@/types/chat";
 import { FlatList, StyleSheet } from "react-native";
 export default function HomeScreen() {
-  const date = new Date();
-
   const renderItem = ({ item }: { item: Channel }) => (
     <ChatRoomCard key={item.channel_url} {...item} />
   );
@@ -76,9 +74,9 @@ export default function HomeScreen() {
           </ThemedText>
           <FlatList
             data={dummyChannels}
+            scrollEnabled={false}
             renderItem={renderItem}
             keyExtractor={(channel) => channel.channel_url}
-            contentContainerStyle={styles.channelContainer}
           />
         </ThemedView>
       </ThemedView>
@@ -90,9 +88,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.light.background,
-  },
-  channelContainer: {
-    gap: 20,
   },
   flewRow: {
     flexDirection: "row",
