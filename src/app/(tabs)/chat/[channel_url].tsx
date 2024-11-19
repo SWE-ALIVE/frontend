@@ -82,7 +82,7 @@ export default function ChatScreen() {
         align="left"
         leftIcon={{
           icon: <Feather name="chevron-left" size={24} color="black" />,
-          onPress: () => router.back(),
+          onPress: () => router.push("/chat"),
         }}
         rightIcons={[
           {

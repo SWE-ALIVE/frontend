@@ -153,27 +153,27 @@ const styles = StyleSheet.create({
 
 const dummyDevices: DeviceCardProps[] = [
   {
-    category: "washing-machine",
+    category: "WASHING_MACHINE",
     name: "LG 통돌이 세탁기",
     id: "1",
   },
   {
-    category: "dryer",
+    category: "DRYER",
     name: "LG 트롬 오브제컬렉션 건조기",
     id: "2",
   },
   {
-    category: "refrigerator",
+    category: "REFRIGERATOR",
     name: "LG 디오스 오브제컬렉션 빌트인 타입",
     id: "3",
   },
   {
-    category: "air-conditioner",
+    category: "AIR_CONDITIONER",
     name: "LG 휘센 벽걸이에어컨",
     id: "4",
   },
   {
-    category: "tv",
+    category: "TV",
     name: "LG 울트라 HD TV (스탠드형)",
     id: "5",
   },

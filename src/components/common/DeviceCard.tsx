@@ -1,5 +1,5 @@
-import { DeviceMap, DeviceNameMap } from "@/components/icons/devices/devices";
 import { Colors } from "@/constants/colors.constant";
+import { DeviceIconMap, TranslateDeviceName } from "@/types/device";
 import React, { useState } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Animated, {
@@ -10,7 +10,7 @@ import Animated, {
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 export interface DeviceCardProps {
-  category: keyof typeof DeviceMap;
+  category: keyof typeof DeviceIconMap;
   name: string;
   id: string;
   disabled?: boolean;
@@ -19,7 +19,7 @@ export interface DeviceCardProps {
 const DeviceCard = ({ category, name }: DeviceCardProps) => {
   const [isClicked, setIsClicked] = useState(false);
 
-  const IconComponent = DeviceMap[category];
+  const IconComponent = DeviceIconMap[category];
 
   const iconBackgroundColor = useSharedValue(Colors.light.tint);
 
@@ -58,7 +58,7 @@ const DeviceCard = ({ category, name }: DeviceCardProps) => {
           type="subhead"
           color={isClicked ? Colors.light.lightGray : Colors.light.black}
         >
-          {DeviceNameMap[category]}
+          {TranslateDeviceName[category]}
         </ThemedText>
         <ThemedText
           type="body"

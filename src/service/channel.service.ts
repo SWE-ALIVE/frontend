@@ -1,4 +1,5 @@
 import { Message } from "@/types/chat";
+import { sendbird_instance } from "./axios-instance";
 
 export interface Channel {
   channel_url: string;
@@ -9,3 +10,12 @@ export interface Channel {
   unread_message_count: number;
   last_message: Message;
 }
+
+interface Response {
+  channels: Channel[];
+}
+
+export const getChannels = async (): Promise<Response> => {
+  const response = await sendbird_instance.get(`/channels`);
+  return response.data;
+};

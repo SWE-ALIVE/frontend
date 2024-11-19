@@ -6,8 +6,8 @@ import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 interface AppBarProps {
   title?: string;
-  leftIcon?: { icon: ReactNode; onPress: () => void };
-  rightIcons?: { icon: ReactNode; onPress: () => void }[];
+  leftIcon?: { icon: ReactNode; onPress: () => void; disabled?: boolean };
+  rightIcons?: { icon: ReactNode; onPress: () => void; disabled?: boolean }[];
   align?: "center" | "left";
 }
 
@@ -37,13 +37,14 @@ export function AppBar({
           </ThemedText>
         )}
         <ThemedView
-          style={[
-            styles.rightIcons,
-            noLeftAndTitle && { marginLeft: "auto" }, // 조건부 스타일
-          ]}
+          style={[styles.rightIcons, noLeftAndTitle && { marginLeft: "auto" }]}
         >
           {rightIcons.map((icon, index) => (
-            <TouchableOpacity key={index} onPress={icon.onPress}>
+            <TouchableOpacity
+              key={index}
+              onPress={icon.onPress}
+              disabled={icon.disabled}
+            >
               {icon.icon}
             </TouchableOpacity>
           ))}

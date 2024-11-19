@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = "";
+const BASE_URL =
+  "http://ec2-43-202-59-105.ap-northeast-2.compute.amazonaws.com";
 
 const instance = axios.create({
   baseURL: BASE_URL,
@@ -8,7 +9,7 @@ const instance = axios.create({
 });
 
 const sendbird_instance = axios.create({
-  baseURL: `${BASE_URL}/api/sendbird/`,
+  baseURL: `${BASE_URL}/v1/sendbird/`,
   timeout: 20000,
 });
 

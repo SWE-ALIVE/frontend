@@ -1,20 +1,32 @@
-import { ChatRoomCard } from "@/components/chat/ChatRoomCard";
 import { AppBar } from "@/components/common/AppBar";
+import { Button } from "@/components/common/Button";
+import { Loading } from "@/components/common/Loading";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import BellIcon from "@/components/icons/Bell";
-import DotsCircle from "@/components/icons/DotsCircle";
 import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import PlusIcon from "@/components/icons/Plus";
 import { Colors } from "@/constants/colors.constant";
 import { Channel } from "@/service/channel.service";
+import { useDeviceStore } from "@/stores/useDeviceStore";
 import { Message } from "@/types/chat";
-import { FlatList, StyleSheet } from "react-native";
-export default function HomeScreen() {
-  const renderItem = ({ item }: { item: Channel }) => (
-    <ChatRoomCard key={item.channel_url} {...item} />
-  );
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { StyleSheet } from "react-native";
+export default function ReadyToConnectScreen() {
+  const { is_connected, setIsConnected } = useDeviceStore();
+  console.log(is_connected);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const handleConnect = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsConnected(true);
+      router.push("/chat");
+    }, 5000);
+  };
   return (
     <ThemedView style={styles.container}>
       <AppBar
@@ -30,7 +42,7 @@ export default function HomeScreen() {
                 strokeWidth={1}
               />
             ),
-            onPress: () => console.log("Search"),
+            onPress: () => console.log("가전제품 있어야 만들지 바보야"),
           },
           {
             icon: (
@@ -41,7 +53,7 @@ export default function HomeScreen() {
                 strokeWidth={1}
               />
             ),
-            onPress: () => console.log("Search"),
+            onPress: () => console.log("가전제품 있어야 만들지 바보야"),
           },
           {
             icon: (
@@ -52,34 +64,30 @@ export default function HomeScreen() {
                 strokeWidth={1}
               />
             ),
-            onPress: () => console.log("Search"),
+            onPress: () => console.log("가전제품 있어야 만들지 바보야"),
           },
         ]}
       />
-      <ThemedView style={{ paddingHorizontal: 16 }}>
-        <ThemedView style={{ paddingBottom: 32 }}>
-          <ThemedText
-            type="callout"
-            style={{ marginTop: 40, marginBottom: 16 }}
-          >
-            최근 실행된 가전제품
-          </ThemedText>
-          <ThemedView style={styles.flewRow}>
-            <DotsCircle width={48} height={48} color={Colors.light.lowGray} />
-          </ThemedView>
-        </ThemedView>
-        <ThemedView>
-          <ThemedText type="callout" style={{ marginBottom: 16 }}>
-            채팅방 목록
-          </ThemedText>
-          <FlatList
-            data={dummyChannels}
-            scrollEnabled={false}
-            renderItem={renderItem}
-            keyExtractor={(channel) => channel.channel_url}
-          />
-        </ThemedView>
+      <ThemedView
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingHorizontal: 48,
+          gap: 24,
+        }}
+      >
+        <Button fullWidth onPress={handleConnect}>
+          LG ThinQ와 연결하기
+        </Button>
+        <ThemedText type="body" color={Colors.light.lowGray}>
+          혹은
+        </ThemedText>
+        <Button fullWidth variant="text">
+          직접 가전제품 가져오기
+        </Button>
       </ThemedView>
+      <Loading isLoading={isLoading} duration={4000} />
     </ThemedView>
   );
 }
