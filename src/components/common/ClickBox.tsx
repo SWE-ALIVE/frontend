@@ -3,20 +3,83 @@ import Feather from "@expo/vector-icons/Feather";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import { Colors } from "@/constants/colors.constant";
+import { useRouter } from "expo-router";
 
-interface ClickBoxProps {
-  title?: string;
-  timeRange?: string;
-  content?: string;
+interface ExeHistory {
+  name: string;
+  startTime: string;
+  endTime: string;
+  status: "success" | "fail" | "running";
+  duration: number;
+  eleUsage: {
+    Wh: number;
+    fare: number;
+  };
 }
 
-export const ClickBox = ({ title, timeRange, content }: ClickBoxProps) => {
+interface ClickBoxProps {
+  title: string;
+  day: string;
+  content: string;
+  exeHistory: ExeHistory[];
+  exekey: string;
+}
+const formatTime = (dateTimeString: string) => {
+  const date = new Date(dateTimeString);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const period = hours >= 12 ? "오후" : "오전";
+  const formattedHours = hours % 12 || 12;
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+
+  return `${period} ${formattedHours}:${formattedMinutes}`;
+};
+
+const getTimeRanges = (exeHistory: ExeHistory[]) => {
+  return exeHistory
+    .map((history) => {
+      const start = formatTime(history.startTime);
+      const end = formatTime(history.endTime);
+      return `${start} ~ ${end}`;
+    })
+    .join(", ");
+};
+export const ClickBox = ({
+  title,
+  day,
+  content,
+  exeHistory,
+  exekey,
+}: ClickBoxProps) => {
+  const router = useRouter();
+  const timeRange = getTimeRanges(exeHistory);
+
+  const handlePress = () => {
+    router.push({
+      pathname: "/exeAnalysis/[exeKey]",
+      params: {
+        day,
+        content,
+        exeHistory: JSON.stringify(exeHistory),
+        exeKey: exekey,
+      },
+    });
+  };
   return (
-    <TouchableOpacity style={styles.container} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={styles.container}
+      activeOpacity={0.7}
+      onPress={handlePress}
+    >
       <ThemedView style={styles.contentContainer}>
-        <ThemedView>
+        <ThemedView style={{ flex: 1, marginRight: 48 }}>
           <ThemedText type="headline">{title}</ThemedText>
-          <ThemedText type="body" style={{ marginTop: 4 }}>
+          <ThemedText
+            type="body"
+            style={{ marginTop: 4 }}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {timeRange}
           </ThemedText>
         </ThemedView>
