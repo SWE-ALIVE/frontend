@@ -11,7 +11,7 @@ import { Colors } from "@/constants/colors.constant";
 import { useLogin } from "@/hooks/useLogin";
 import { useUserStore } from "@/stores/useUserStore";
 import { useRouter } from "expo-router";
-import { LoginResponse } from "@/service/auth.service";
+// import { LoginResponse } from "@/service/auth.service";
 
 export default function HomeScreen() {
   const [phone, setPhone] = useState({
@@ -28,12 +28,12 @@ export default function HomeScreen() {
   const [loginError, setLoginError] = useState(false);
   const router = useRouter();
 
-  const testLoginData: LoginResponse = {
-    id: "user_123",
-    name: "홍길동",
-    birth_date: "1990-01-01",
-    phone_number: "010-1234-5678",
-  };
+  // const testLoginData: LoginResponse = {
+  //   id: "user_123",
+  //   name: "홍길동",
+  //   birth_date: "1990-01-01",
+  //   phone_number: "010-1234-5678",
+  // };
 
   const formatPhoneNumber = (number: string): string => {
     const cleaned = number.replace(/\D/g, "");
@@ -49,7 +49,7 @@ export default function HomeScreen() {
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
   const handleLogin = () => {
-    setUser(testLoginData);
+    // setUser(testLoginData);
     router.push("/(tabs)");
     // loginMutation.mutate(
     //   {
@@ -87,15 +87,15 @@ export default function HomeScreen() {
       setPasswordError(false);
   }, [phone.val, password.val]);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      const redirect = setTimeout(() => {
-        router.push("/(tabs)");
-      }, 0);
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     const redirect = setTimeout(() => {
+  //       router.push("/(tabs)");
+  //     }, 0);
 
-      return () => clearTimeout(redirect);
-    }
-  }, [isLoggedIn]);
+  //     return () => clearTimeout(redirect);
+  //   }
+  // }, [isLoggedIn]);
 
   return (
     <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>

@@ -46,8 +46,14 @@ type MarkedDates = {
 };
 
 export default function AnalysisScreen() {
-  const today = new Date().toISOString().split("T")[0];
-
+  // const today = new Date().toISOString().split("T")[0];
+  // const RealToday = new Date();
+  // console.log(RealToday);
+  // console.log(today);
+  const today = new Date()
+    .toLocaleDateString("ko-KR")
+    .replaceAll(". ", "-")
+    .slice(0, -1);
   const [selectedDate, setSelectedDate] = useState(today);
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -327,8 +333,11 @@ export default function AnalysisScreen() {
           <TouchableOpacity
             style={styles.todayButton}
             onPress={() => {
-              const currentDate = new Date();
-              setSelectedDate(today);
+              const currentDate = new Date(
+                new Date().getTime() + 9 * 60 * 60 * 1000
+              );
+              const newToday = currentDate.toISOString().split("T")[0];
+              setSelectedDate(newToday);
               setSelectedYear(currentDate.getFullYear());
               setSelectedMonth(currentDate.getMonth() + 1);
             }}
