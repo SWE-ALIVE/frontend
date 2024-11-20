@@ -12,6 +12,11 @@ import { useLogin } from "@/hooks/useLogin";
 import { useUserStore } from "@/stores/useUserStore";
 import { useRouter } from "expo-router";
 import { LoginResponse } from "@/service/auth.service";
+import { useEffect, useState } from "react";
+import { Keyboard, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Image } from "react-native";
+import { StyleSheet } from "react-native";
 
 export default function HomeScreen() {
   const [phone, setPhone] = useState({
@@ -51,32 +56,32 @@ export default function HomeScreen() {
   const handleLogin = () => {
     setUser(testLoginData);
     router.push("/(tabs)");
-    // loginMutation.mutate(
-    //   {
-    //     phone_number: formatPhoneNumber(phone.val),
-    //     password: password.val,
-    //   },
-    //   {
-    //     onSuccess: (data) => {
-    //       if (data) {
-    //         setUser(data);
-    //       }
-    //     },
-    //     onError: (error) => {
-    //       setLoginError(true);
-    //       setPhoneError(true);
-    //       setPasswordError(true);
-    //       setPhone({
-    //         val: "",
-    //         prev: "",
-    //       });
-    //       setPassword({
-    //         val: "",
-    //         prev: "",
-    //       });
-    //     },
-    //   }
-    // );
+    loginMutation.mutate(
+      {
+        phone_number: formatPhoneNumber(phone.val),
+        password: password.val,
+      },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            setUser(data);
+          }
+        },
+        onError: (error) => {
+          setLoginError(true);
+          setPhoneError(true);
+          setPasswordError(true);
+          setPhone({
+            val: "",
+            prev: "",
+          });
+          setPassword({
+            val: "",
+            prev: "",
+          });
+        },
+      }
+    );
   };
 
   useEffect(() => {

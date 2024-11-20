@@ -72,7 +72,9 @@ export const ClickBox = ({
       onPress={handlePress}
     >
       <ThemedView style={styles.contentContainer}>
-        <ThemedView style={{ flex: 1, marginRight: 48 }}>
+        <ThemedView
+          style={{ flex: 1, marginRight: 48, backgroundColor: "#F8F8F8" }}
+        >
           <ThemedText type="headline">{title}</ThemedText>
           <ThemedText
             type="body"
@@ -98,6 +100,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
+    backgroundColor: "#F8F8F8",
+
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
