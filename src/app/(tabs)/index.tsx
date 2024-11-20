@@ -10,15 +10,23 @@ import { Colors } from "@/constants/colors.constant";
 import { Channel } from "@/service/channel.service";
 import { useDeviceStore } from "@/stores/useDeviceStore";
 import { Message } from "@/types/chat";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 export default function ReadyToConnectScreen() {
-  const { is_connected, setIsConnected } = useDeviceStore();
-  console.log(is_connected);
-
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
+  const { is_connected, setIsConnected } = useDeviceStore();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (is_connected) {
+        router.replace("/chat");
+      }
+    }, [is_connected, router])
+  );
+
   const handleConnect = () => {
     setIsLoading(true);
     setTimeout(() => {

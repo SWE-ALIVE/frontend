@@ -1,4 +1,4 @@
-import { Tabs, useRouter } from "expo-router";
+import { Tabs, usePathname, useRouter } from "expo-router";
 import React from "react";
 
 import { AppBar } from "@/components/common/AppBar";
@@ -27,32 +27,62 @@ export default function TabLayout() {
   const activeColor = Colors[colorScheme ?? "light"].tint;
   const inactiveColor = "#9DB2CE";
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <Tabs
-      screenOptions={({ route }) => ({
-        tabBarActiveTintColor: activeColor,
-        tabBarInactiveTintColor: inactiveColor,
-        tabBarStyle: {
-          height: 96,
-          paddingTop: 16,
-          display: route.name === "chat/[channel_url]" ? "none" : "flex",
-        },
-        tabBarLabel: ({ focused }) =>
-          focused ? (
-            <ThemedText type="footnote" color={Colors["light"].tint}>
-              {ROUTE_TITLES[route.name as RouteName]}
-            </ThemedText>
-          ) : null,
-      })}
+      screenOptions={({ route }) => {
+        const isHomeRelatedRoute = [
+          "index",
+          "chat/create_chat_room",
+          "chat/create_chat_name",
+          "chat/index",
+        ].includes(route.name);
+
+        const isNestedRoute = [
+          "chat/create_chat_room",
+          "chat/create_chat_name",
+          "chat/[channel_url]",
+          "exeAnalysis/[exeKey]",
+        ].includes(route.name);
+
+        return {
+          tabBarActiveTintColor: activeColor,
+          tabBarInactiveTintColor: inactiveColor,
+          tabBarStyle: {
+            height: 96,
+            paddingTop: 16,
+            display: isNestedRoute ? "none" : "flex",
+          },
+          tabBarLabel: ({ focused }) => {
+            // 현재 라우트에 따라 라벨 설정
+            if (focused) {
+              return (
+                <ThemedText type="footnote" color={Colors["light"].tint}>
+                  {ROUTE_TITLES[route.name as RouteName] ?? ""}
+                </ThemedText>
+              );
+            }
+            return null;
+          },
+        };
+      }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "홈",
-          tabBarIcon: ({ color }) => (
-            <HomeIcon color={color} width={24} height={24} />
-          ),
+          tabBarIcon: ({ color }) => {
+            const isHomeRelatedRoute = ["/chat", "/index"].includes(pathname);
+
+            return (
+              <HomeIcon
+                color={isHomeRelatedRoute ? Colors.light.tint : color}
+                width={24}
+                height={24}
+              />
+            );
+          },
           headerShown: false,
         }}
       />
