@@ -10,22 +10,30 @@ import { Colors } from "@/constants/colors.constant";
 import { Channel } from "@/service/channel.service";
 import { useDeviceStore } from "@/stores/useDeviceStore";
 import { Message } from "@/types/chat";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 export default function ReadyToConnectScreen() {
-  const { is_connected, setIsConnected } = useDeviceStore();
-  console.log(is_connected);
-
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
+  const { is_connected, setIsConnected } = useDeviceStore();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (is_connected) {
+        router.replace("/chat");
+      }
+    }, [is_connected, router])
+  );
+
   const handleConnect = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
       setIsConnected(true);
       router.push("/chat");
-    }, 5000);
+    }, 2000);
   };
   return (
     <ThemedView style={styles.container}>
@@ -87,7 +95,7 @@ export default function ReadyToConnectScreen() {
           직접 가전제품 가져오기
         </Button>
       </ThemedView>
-      <Loading isLoading={isLoading} duration={4000} />
+      <Loading isLoading={isLoading} duration={2000} />
     </ThemedView>
   );
 }

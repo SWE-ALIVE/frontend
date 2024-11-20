@@ -11,7 +11,7 @@ export const sendMessage = async (message: MessageBody): Promise<Message> => {
 interface GetMessageRequest {
   channel_url: string;
   limit?: number;
-  message_ts?: number;
+  message_ts?: number | "";
 }
 interface GetMessageResponse {
   messages: Message[];

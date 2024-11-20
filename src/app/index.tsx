@@ -8,22 +8,18 @@ import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import LangToggleComp from "@/components/login/toggle";
 import { Colors } from "@/constants/colors.constant";
-import { useLogin } from "@/hooks/useLogin";
+import { login } from "@/service/auth.service";
 import { useUserStore } from "@/stores/useUserStore";
 import { useRouter } from "expo-router";
-import { LoginResponse } from "@/service/auth.service";
 import { useEffect, useState } from "react";
-import { Keyboard, Pressable } from "react-native";
+import { Image, Keyboard, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "react-native";
-import { StyleSheet } from "react-native";
 
 export default function HomeScreen() {
   const [phone, setPhone] = useState({
     val: "",
     prev: "",
   });
-
   const [password, setPassword] = useState({
     val: "",
     prev: "",
@@ -31,14 +27,9 @@ export default function HomeScreen() {
   const [phoneError, setPhoneError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [loginError, setLoginError] = useState(false);
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const testLoginData: LoginResponse = {
-    id: "user_123",
-    name: "홍길동",
-    birth_date: "1990-01-01",
-    phone_number: "010-1234-5678",
-  };
+  const router = useRouter();
 
   const formatPhoneNumber = (number: string): string => {
     const cleaned = number.replace(/\D/g, "");
@@ -49,39 +40,27 @@ export default function HomeScreen() {
     return number;
   };
 
-  const loginMutation = useLogin();
   const setUser = useUserStore((state) => state.setUser);
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
-  const handleLogin = () => {
-    setUser(testLoginData);
-    router.push("/(tabs)");
-    loginMutation.mutate(
-      {
+  const handleLogin = async () => {
+    try {
+      setIsLoading(true);
+      const userData = await login({
         phone_number: formatPhoneNumber(phone.val),
         password: password.val,
-      },
-      {
-        onSuccess: (data) => {
-          if (data) {
-            setUser(data);
-          }
-        },
-        onError: (error) => {
-          setLoginError(true);
-          setPhoneError(true);
-          setPasswordError(true);
-          setPhone({
-            val: "",
-            prev: "",
-          });
-          setPassword({
-            val: "",
-            prev: "",
-          });
-        },
-      }
-    );
+      });
+      setUser({
+        name: userData.name,
+        phone_number: userData.phoneNumber,
+        birth_date: userData.birthDate,
+        id: userData.id,
+      });
+      setIsLoading(false);
+    } catch (err) {
+      setLoginError(true);
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -189,16 +168,12 @@ export default function HomeScreen() {
         <ThemedView>
           <Button
             variant={
-              phone.val.length != 11 ||
-              password.val.length == 0 ||
-              loginMutation.isPending
+              phone.val.length != 11 || password.val.length == 0 || isLoading
                 ? "disabled"
                 : "filled"
             }
             disabled={
-              phone.val.length != 11 ||
-              password.val.length == 0 ||
-              loginMutation.isPending
+              phone.val.length != 11 || password.val.length == 0 || isLoading
             }
             onPress={handleLogin}
           >

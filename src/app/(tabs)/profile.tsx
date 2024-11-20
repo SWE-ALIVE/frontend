@@ -1,12 +1,20 @@
 import { StyleSheet } from "react-native";
 
-import { Bold } from "@/components/common/Bold";
 import { Button } from "@/components/common/Button";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
+import { useUserStore } from "@/stores/useUserStore";
+import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
+  const { clearUser, user } = useUserStore();
+  const router = useRouter();
+
+  const logout = () => {
+    clearUser();
+    router.push("/");
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ThemedText type="title1" style={{ marginBottom: 8 }}>
@@ -14,10 +22,18 @@ export default function ProfileScreen() {
       </ThemedText>
       <ThemedView>
         <ThemedText type="title1" style={{ marginBottom: 16 }}>
-          볼드체를 사용하기 위해서는 <Bold type="title1">볼드 컴포넌트</Bold>를
-          사용하세요.
+          정보
         </ThemedText>
-        <Button variant="filled" onPress={() => {}}>
+        <ThemedText type="title1" style={{ marginBottom: 16 }}>
+          {user?.name}
+        </ThemedText>
+        <ThemedText type="title1" style={{ marginBottom: 16 }}>
+          {user?.phone_number}
+        </ThemedText>
+        <ThemedText type="title1" style={{ marginBottom: 16 }}>
+          로그아웃
+        </ThemedText>
+        <Button variant="filled" onPress={logout}>
           Open Developer Tools
         </Button>
       </ThemedView>

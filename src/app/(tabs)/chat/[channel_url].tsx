@@ -24,6 +24,7 @@ type ChatParams = {
 export default function ChatScreen() {
   const { channel_url, channel_name } = useLocalSearchParams<ChatParams>();
   const { isVisible, toggle, close } = useModal();
+  const router = useRouter();
   const {
     data: messages,
     error,
@@ -31,8 +32,13 @@ export default function ChatScreen() {
   } = useQuery<Message[]>({
     queryKey: ["messages", channel_url],
     queryFn: async () => {
-      const limit = 4;
-      const response = await getMessages({ channel_url, limit, message_ts: 0 });
+      const response = await getMessages({
+        channel_url,
+        limit: 12,
+        message_ts: "",
+      });
+      console.log(response.messages);
+
       return response.messages;
     },
   });
@@ -56,7 +62,6 @@ export default function ChatScreen() {
     };
   }, []);
 
-  const router = useRouter();
   return (
     <ThemedView style={styles.container}>
       <AppBar
@@ -76,7 +81,7 @@ export default function ChatScreen() {
                 strokeWidth={1}
               />
             ),
-            onPress: () => console.log("Search"),
+            onPress: () => router.push("/(tabs)/inbox"),
           },
           {
             icon: (

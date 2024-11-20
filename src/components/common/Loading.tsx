@@ -10,7 +10,7 @@ interface LoadingProps {
 const gifUrl =
   "https://www.lg.com/content/dam/lge/global/our-brand/src/mocks/bs0002/lg_electronics_expressive_symbol_transparent_white_appearing.gif";
 
-export const Loading = ({ isLoading, duration = 4000 }: LoadingProps) => {
+export const Loading = ({ isLoading, duration = 2000 }: LoadingProps) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export const Loading = ({ isLoading, duration = 4000 }: LoadingProps) => {
           const nextProgress = prev + 0.01;
           return nextProgress > 1 ? 1 : nextProgress;
         });
-      }, duration / 100);
+      }, duration / 1000);
 
       return () => clearInterval(interval);
     }
