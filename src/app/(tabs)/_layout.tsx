@@ -1,6 +1,5 @@
 import { Tabs, usePathname, useRouter } from "expo-router";
 import React from "react";
-
 import { AppBar } from "@/components/common/AppBar";
 import { ThemedText } from "@/components/common/ThemedText";
 import AnalysisIcon from "@/components/icons/Analysis";
@@ -200,6 +199,28 @@ export default function TabLayout() {
         options={{
           href: null,
           headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="appDetail/[appKey]"
+        options={{
+          href: null,
+          header: () => (
+            <AppBar
+              title=""
+              align="left"
+              leftIcon={{
+                icon: (
+                  <Feather
+                    name="chevron-left"
+                    size={20}
+                    color={Colors.light.lowGray}
+                  />
+                ),
+                onPress: () => router.back(),
+              }}
+            />
+          ),
         }}
       />
     </Tabs>
