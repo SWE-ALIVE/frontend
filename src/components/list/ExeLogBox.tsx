@@ -30,7 +30,6 @@ export const ExeLogBox = ({
   duration,
   status,
 }: ExeLogBoxProps) => {
-  console.log(usageDate);
   const date = new Date(usageDate);
   return (
     <ThemedView style={styles.container}>

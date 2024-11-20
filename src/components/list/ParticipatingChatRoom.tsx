@@ -17,7 +17,6 @@ export const ParticipatingChatRoom = (channel: Channel) => {
       params: { channel_url: channel_url, channel_name: name },
     });
   };
-
   return (
     <TouchableHighlight underlayColor="#DDDDDD" onPress={handlePress}>
       <ThemedView style={styles.cardContainer}>

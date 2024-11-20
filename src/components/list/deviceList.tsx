@@ -23,6 +23,7 @@ const DeviceList = ({ category, name, id }: DeviceListProp) => {
   const router = useRouter();
   const translatedCategory = TranslateDeviceName[category];
   const handlePress = () => {
+    console.log("pushed");
     router.push({
       pathname: "/appDetail/[appKey]",
       params: { appKey, category, translatedCategory, name },

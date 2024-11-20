@@ -16,112 +16,46 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useUserStore } from "@/stores/useUserStore";
+import Feather from "@expo/vector-icons/Feather";
+
 const deviceUsage: DeviceUsageResponse = {
-  device_name: "삼성 그랑데 세탁기",
-  chatRoom: [
+  deviceName: "삼성 그랑데 세탁기",
+  chatRooms: [
     {
-      chatRoom_name: "kitchen_device_room",
-      chatRoom_device: ["세탁기", "건조기", "에어컨"],
+      chatRoomName: "kitchen_device_room",
+      chatRoomDevices: ["세탁기", "건조기", "에어컨"],
     },
     {
-      chatRoom_name: "livingroom_device_room",
-      chatRoom_device: ["TV", "공기청정기", "에어컨"],
+      chatRoomName: "livingroom_device_room",
+      chatRoomDevices: ["TV", "공기청정기", "에어컨"],
     },
     {
-      chatRoom_name: "bedroom_device_room",
-      chatRoom_device: ["TV", "공기청정기", "에어컨"],
+      chatRoomName: "bedroom_device_room",
+      chatRoomDevices: ["TV", "공기청정기", "에어컨"],
     },
   ],
-  action: [
+  actions: [
     {
-      action_description: "표준 세탁",
-      usage_date: "2024-03-20",
-      start_time: "14:30",
-      end_time: "15:45",
+      actionDescription: "표준 세탁",
+      usageDate: "2024-03-20",
+      startTime: "14:30",
+      endTime: "15:45",
     },
     {
-      action_description: "찌든때 세탁",
-      usage_date: "2024-03-20",
-      start_time: "18:00",
-      end_time: "19:30",
+      actionDescription: "찌든때 세탁",
+      usageDate: "2024-03-20",
+      startTime: "18:00",
+      endTime: "19:30",
     },
     {
-      action_description: "헹굼 건조",
-      usage_date: "2024-03-19",
-      start_time: "10:15",
-      end_time: "11:00",
+      actionDescription: "헹굼 건조",
+      usageDate: "2024-03-19",
+      startTime: "10:15",
+      endTime: "11:00",
     },
   ],
 };
-// const channels: Channel[] = [
-//   {
-//     channel_url: "kitchen_device_room",
-//     name: "주방가전 채팅방",
-//     cover_url: "https://example.com/kitchen.jpg",
-//     member_count: 15,
-//     joined_member_count: 8,
-//     unread_message_count: 3,
-//     last_message: {
-//       type: "MESG",
-//       message_id: 12345,
-//       message: "식기세척기 사용 팁 공유해요",
-//       created_at: Date.now(),
-//       channel_url: "kitchen_device_room",
-//       mentioned_users: [],
-//       mention_type: "users",
-//       silent: false,
-//       is_op_msg: false,
-//       message_events: {
-//         send_push_notification: "true",
-//         update_unread_count: true,
-//         update_mention_count: true,
-//         update_last_message: true,
-//       },
-//       user: {
-//         user_id: "user1",
-//         profile_url: "https://example.com/user1.jpg",
-//         require_auth_for_profile_image: false,
-//         nickname: "주방마스터",
-//         role: "operator",
-//         is_active: true,
-//       },
-//     },
-//   },
-//   {
-//     channel_url: "livingroom_device_room",
-//     name: "거실가전 채팅방",
-//     cover_url: "https://example.com/living.jpg",
-//     member_count: 20,
-//     joined_member_count: 12,
-//     unread_message_count: 5,
-//     last_message: {
-//       type: "MESG",
-//       message_id: 12346,
-//       message: "에어컨 청소 방법 질문있습니다",
-//       created_at: Date.now(),
-//       channel_url: "livingroom_device_room",
-//       mentioned_users: [],
-//       mention_type: "users",
-//       silent: false,
-//       is_op_msg: false,
-//       message_events: {
-//         send_push_notification: "true",
-//         update_unread_count: true,
-//         update_mention_count: true,
-//         update_last_message: true,
-//       },
-//       user: {
-//         user_id: "user2",
-//         profile_url: "https://example.com/user2.jpg",
-//         require_auth_for_profile_image: false,
-//         nickname: "홈케어러",
-//         role: {},
-//         is_active: true,
-//       },
-//     },
-//   },
-// ];
-
 const channels: Channel[] = [
   {
     channel_url: "kitchen_device_room",
@@ -264,25 +198,42 @@ export default function AppDetailScreen() {
     translatedCategory: string;
     name: string;
   }>();
-  // const { data: channels } = useQuery({
-  //   queryKey: ["channels"],
-  //   queryFn: () => getChannels("zxvm5962"),
+  const userId = useUserStore((state) => state.user?.id);
+  // const { data: channels = [], error: channelError } = useQuery({
+  //   queryKey: ["channels", appKey],
+  //   queryFn: async () => {
+  //     const response = await getChannels("zxvm5962");
+  //     return response.channels;
+  //   },
+  //   enabled: !!appKey,
   // });
-  // const { data: deviceUsage } = useQuery({
-  //   queryKey: ["deviceUsage", appKey],
-  //   queryFn: () => getDeviceUsage(1, Number(appKey)), // user_id와 device_id 전달
+  // if (channelError) {
+  //   console.log("channel Error" + channelError.message);
+  // }
+
+  // const { data: deviceUsage, error: deviceError } = useQuery({
+  //   queryKey: ["deviceUsage", appKey, userId],
+  //   queryFn: async () => {
+  //     if (!userId || !appKey)
+  //       throw new Error("User ID and App key are required");
+  //     const res = await getDeviceUsage(userId, "appKey");
+  //     return res;
+  //   },
   // });
+  // if (deviceError) {
+  //   console.log("device Error" + deviceError.message);
+  // }
 
   const IconComponent = DeviceIconMap[category];
 
   const renderActions = () => {
-    if (!deviceUsage?.action?.length) {
+    if (!deviceUsage?.actions?.length) {
       return <ThemedText>실행 내역이 없습니다.</ThemedText>;
     }
 
-    return deviceUsage.action.map((action, index) => {
-      const startDateTime = `${action.usage_date}T${action.start_time}:00`;
-      const endDateTime = `${action.usage_date}T${action.end_time}:00`;
+    return deviceUsage.actions.map((action, index) => {
+      const startDateTime = `${action.usageDate}T${action.startTime}:00`;
+      const endDateTime = `${action.usageDate}T${action.endTime}:00`;
       const duration =
         (new Date(endDateTime).getTime() - new Date(startDateTime).getTime()) /
         (1000 * 60);
@@ -290,8 +241,8 @@ export default function AppDetailScreen() {
       return (
         <ThemedView key={index} style={{ marginVertical: 4 }}>
           <ExeLogBox
-            usageDate={action.usage_date}
-            mode={action.action_description}
+            usageDate={action.usageDate}
+            mode={action.actionDescription}
             startTime={startDateTime}
             endTime={endDateTime}
             duration={duration}
@@ -311,26 +262,55 @@ export default function AppDetailScreen() {
   return (
     <ScrollView style={styles.container}>
       <ThemedView style={styles.header}>
-        <Animated.View
-          style={[
-            {
-              width: 72,
-              height: 72,
-              justifyContent: "center",
-              alignItems: "center",
+        <ThemedView>
+          <Animated.View
+            style={[
+              {
+                width: 72,
+                height: 72,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 999,
+              },
+              animatedBackgroundStyle,
+            ]}
+          >
+            <IconComponent
+              width={24}
+              height={24}
+              color={Colors.light.background}
+            />
+          </Animated.View>
+          <ThemedView
+            style={{
+              width: 16,
+              height: 16,
               borderRadius: 999,
-            },
-            animatedBackgroundStyle,
-          ]}
+              backgroundColor: Colors.light.lowGray,
+              position: "absolute",
+              top: 54,
+              right: 4,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Feather name="camera" size={8} color={Colors.light.background} />
+          </ThemedView>
+        </ThemedView>
+        <ThemedView
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            marginTop: 8,
+            alignItems: "center",
+          }}
         >
-          <IconComponent
-            width={24}
-            height={24}
-            color={Colors.light.background}
-          />
-        </Animated.View>
+          <ThemedText style={{ marginLeft: 10 }}>
+            {translatedCategory}{" "}
+          </ThemedText>
+          <Feather name="edit-2" size={10} color={Colors.light.lowGray} />
+        </ThemedView>
 
-        <ThemedText style={{ marginTop: 8 }}>{translatedCategory}</ThemedText>
         <ThemedText>{name}</ThemedText>
       </ThemedView>
 
@@ -363,16 +343,16 @@ export default function AppDetailScreen() {
           </ThemedView>
         </ThemedView>
         <ThemedView style={styles.sectionContent}>
-          {!deviceUsage?.chatRoom?.length ? (
+          {!deviceUsage?.chatRooms?.length ? (
             <ThemedText>참여 중인 채팅방이 없습니다.</ThemedText>
           ) : (
-            deviceUsage.chatRoom.map((room) => {
+            deviceUsage.chatRooms.map((room) => {
               const channelInfo = channels.find(
-                (channel) => channel.channel_url === room.chatRoom_name
+                (channel) => channel.channel_url === room.chatRoomName
               );
               return channelInfo ? (
                 <ParticipatingChatRoom
-                  key={room.chatRoom_name}
+                  key={room.chatRoomName}
                   {...channelInfo}
                 />
               ) : null;
@@ -405,7 +385,7 @@ export default function AppDetailScreen() {
       </ThemedView>
 
       <ThemedView style={styles.deleteButton}>
-        <ThemedText type="subhead" style={{ color: "red" }}>
+        <ThemedText type="subhead" style={{ color: "red", marginBottom: 64 }}>
           디바이스 삭제하기
         </ThemedText>
       </ThemedView>

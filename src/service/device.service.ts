@@ -1,5 +1,5 @@
 import { Member } from "@/types/device";
-import { sendbird_instance } from "./axios-instance";
+import { instance, sendbird_instance } from "./axios-instance";
 
 interface getDeviceResponse {
   members: Member[];
@@ -13,6 +13,13 @@ export interface Device {
   category: DeviceCategory;
   deviceName: string;
 }
+
+export interface UserDevice {
+  category: DeviceCategory;
+  deviceId: string;
+  deviceName: string;
+}
+
 export type DeviceCategory =
   | "WASHING_MACHINE"
   | "DRYER"
@@ -25,21 +32,21 @@ export type DeviceCategory =
   | "KIMCHI_REFRIGERATOR"
   | "VACUUM_CLEANER";
 interface ChatRoom {
-  chatRoom_name: string;
-  chatRoom_device: string[];
+  chatRoomName: string;
+  chatRoomDevices: string[];
 }
 
 interface Action {
-  action_description: string;
-  usage_date: string;
-  start_time: string;
-  end_time: string;
+  actionDescription: string;
+  usageDate: string;
+  startTime: string;
+  endTime: string;
 }
 
 export interface DeviceUsageResponse {
-  device_name: string;
-  chatRoom: ChatRoom[];
-  action: Action[];
+  deviceName: string;
+  chatRooms: ChatRoom[];
+  actions: Action[];
 }
 
 interface ErrorResponse {
@@ -54,17 +61,19 @@ interface DeviceUsageRequest {
 }
 
 export const getDeviceUsage = async (
-  userId: number,
-  deviceId: number
+  userId: string,
+  deviceId: string
 ): Promise<DeviceUsageResponse> => {
-  const requestBody: DeviceUsageRequest = {
+  const response = await instance.post("/v1/device-usage", {
     user_id: userId,
     device_id: deviceId,
-  };
+  });
+  console.log(response.data);
 
-  const response = await sendbird_instance.post(
-    "/v1/device-usage",
-    requestBody
-  );
+  return response.data;
+};
+export const getUserDevices = async (userId: string): Promise<UserDevice[]> => {
+  const response = await instance.get(`/v1/users/${userId}/devices`);
+
   return response.data;
 };
