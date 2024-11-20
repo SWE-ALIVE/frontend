@@ -17,11 +17,10 @@ export default function HomeScreen() {
   const { data: channels, error } = useQuery({
     queryKey: ["channels"],
     queryFn: async () => {
-      const response = await getChannels();
+      const response = await getChannels("zxvm5962");
       return response.channels;
     },
   });
-
   return (
     <ThemedView style={styles.container}>
       <AppBar

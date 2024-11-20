@@ -8,10 +8,10 @@ import BellIcon from "@/components/icons/Bell";
 import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import { Colors } from "@/constants/colors.constant";
 import { useModal } from "@/hooks/useModal";
-import { sendMessage } from "@/service/message.service";
+import { getMessages } from "@/service/message.service";
 import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -32,39 +32,21 @@ export default function ChatScreen() {
     queryKey: ["messages", channel_url],
     queryFn: async () => {
       const limit = 4;
-      // const response = await getMessages({ channel_url, limit });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const response: { messages: Message[] } = { messages: dummyMessages };
+      const response = await getMessages({ channel_url, limit, message_ts: 0 });
       return response.messages;
     },
-    enabled: !!channel_url,
   });
 
   const [message, setMessage] = useState<MessageBody>({
     message: "",
-    channel_url: "",
-    user_id: "",
+    channel_url: channel_url,
+    user_id: "zxvm5962",
   });
 
-  const mutation = useMutation({
-    mutationFn: (newMessage: MessageBody) => sendMessage(newMessage),
-  });
-
-  const appendMessage = (newMessage: Message) => {
-    // const newMessageBody: MessageBody = {
-    //   channel_url: newMessage.channel_url,
-    //   user_id: newMessage.user.user_id,
-    //   message: newMessage.message,
-    // };
-
-    // mutation.mutate(newMessageBody, {
-    //   onSuccess: () => {
-    //     refetch();
-    //   },
-    // });
-
+  const appendMessage = async (newMessage: Message) => {
     if (messages) {
       messages.push(newMessage);
+      refetch();
     }
   };
 

@@ -15,7 +15,11 @@ interface Response {
   channels: Channel[];
 }
 
-export const getChannels = async (): Promise<Response> => {
-  const response = await sendbird_instance.get(`/channels`);
+export const getChannels = async (userId: string): Promise<Response> => {
+  const response = await sendbird_instance.get(`/channels`, {
+    params: {
+      userId: userId,
+    },
+  });
   return response.data;
 };

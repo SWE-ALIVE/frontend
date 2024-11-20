@@ -9,7 +9,7 @@ const instance = axios.create({
 });
 
 const sendbird_instance = axios.create({
-  baseURL: `${BASE_URL}/v1/sendbird/`,
+  baseURL: `${BASE_URL}/v1/sendbird`,
   timeout: 20000,
 });
 
