@@ -2,8 +2,8 @@ import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, ScrollView } from "react-native";
 import { ThemedView } from "@/components/common/ThemedView";
 import { ThemedText } from "@/components/common/ThemedText";
-import { EnergyCard } from "@/components/analysis/energyCard";
-import { ContentBox } from "@/components/analysis/contentBox";
+import { EnergyCard } from "@/components/analysis/EnergyCard";
+import { ContentBox } from "@/components/analysis/ContentBox";
 import "dayjs/locale/ko";
 
 interface ExeHistory {
