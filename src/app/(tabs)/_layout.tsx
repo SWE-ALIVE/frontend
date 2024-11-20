@@ -44,6 +44,7 @@ export default function TabLayout() {
           "chat/[channel_url]",
           "exeAnalysis/[exeKey]",
           "inbox",
+          "appDetail/[appKey]",
         ].includes(route.name);
 
         return {
@@ -217,7 +218,7 @@ export default function TabLayout() {
                     color={Colors.light.lowGray}
                   />
                 ),
-                onPress: () => router.back(),
+                onPress: () => router.push("/(tabs)/list"),
               }}
             />
           ),
