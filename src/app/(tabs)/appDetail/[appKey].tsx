@@ -5,7 +5,11 @@ import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
 
 export default function AppDetailScreen() {
-  const { appKey } = useLocalSearchParams<{ appKey: string }>();
+  const { appKey, translatedCategory, name } = useLocalSearchParams<{
+    appKey: string;
+    translatedCategory: string;
+    name: string;
+  }>();
 
   return (
     <ScrollView style={styles.container}>
@@ -23,8 +27,8 @@ export default function AppDetailScreen() {
         <ThemedView
           style={{ backgroundColor: Colors.light.tint, width: 64, height: 64 }}
         ></ThemedView>
-        <ThemedText>세탁기</ThemedText>
-        <ThemedText>LG 통돌이 세탁기</ThemedText>
+        <ThemedText>{translatedCategory}</ThemedText>
+        <ThemedText>{name}</ThemedText>
       </ThemedView>
       <ThemedView>
         <ThemedView style={{ flexDirection: "row" }}>
