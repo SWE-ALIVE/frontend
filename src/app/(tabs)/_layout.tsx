@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React from "react";
 
 import { AppBar } from "@/components/common/AppBar";
@@ -11,6 +11,7 @@ import SyncIcon from "@/components/icons/Sync";
 import WalletIcon from "@/components/icons/Wallet";
 import { Colors } from "@/constants/colors.constant";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import Feather from "@expo/vector-icons/Feather";
 
 const ROUTE_TITLES = {
   index: "홈",
@@ -25,6 +26,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const activeColor = Colors[colorScheme ?? "light"].tint;
   const inactiveColor = "#9DB2CE";
+  const router = useRouter();
 
   return (
     <Tabs
@@ -138,6 +140,28 @@ export default function TabLayout() {
         options={{
           href: null,
           headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="exeAnalysis/[exeKey]"
+        options={{
+          href: null,
+          header: () => (
+            <AppBar
+              title=""
+              align="left"
+              leftIcon={{
+                icon: (
+                  <Feather
+                    name="chevron-left"
+                    size={20}
+                    color={Colors.light.lowGray}
+                  />
+                ),
+                onPress: () => router.back(),
+              }}
+            />
+          ),
         }}
       />
     </Tabs>

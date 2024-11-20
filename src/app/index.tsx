@@ -11,9 +11,12 @@ import { Colors } from "@/constants/colors.constant";
 import { useLogin } from "@/hooks/useLogin";
 import { useUserStore } from "@/stores/useUserStore";
 import { useRouter } from "expo-router";
+import { LoginResponse } from "@/service/auth.service";
 import { useEffect, useState } from "react";
-import { Image, Keyboard, Pressable, StyleSheet } from "react-native";
+import { Keyboard, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Image } from "react-native";
+import { StyleSheet } from "react-native";
 
 export default function HomeScreen() {
   const [phone, setPhone] = useState({
@@ -29,6 +32,14 @@ export default function HomeScreen() {
   const [passwordError, setPasswordError] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const router = useRouter();
+
+  const testLoginData: LoginResponse = {
+    id: "user_123",
+    name: "홍길동",
+    birth_date: "1990-01-01",
+    phone_number: "010-1234-5678",
+  };
+
   const formatPhoneNumber = (number: string): string => {
     const cleaned = number.replace(/\D/g, "");
     const match = cleaned.match(/^(\d{3})(\d{4})(\d{4})$/);
@@ -43,33 +54,34 @@ export default function HomeScreen() {
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
   const handleLogin = () => {
+    setUser(testLoginData);
     router.push("/(tabs)");
-    // loginMutation.mutate(
-    //   {
-    //     phone_number: formatPhoneNumber(phone.val),
-    //     password: password.val,
-    //   },
-    //   {
-    //     onSuccess: (data) => {
-    //       if (data) {
-    //         setUser(data);
-    //       }
-    //     },
-    //     onError: (error) => {
-    //       setLoginError(true);
-    //       setPhoneError(true);
-    //       setPasswordError(true);
-    //       setPhone({
-    //         val: "",
-    //         prev: "",
-    //       });
-    //       setPassword({
-    //         val: "",
-    //         prev: "",
-    //       });
-    //     },
-    //   }
-    // );
+    loginMutation.mutate(
+      {
+        phone_number: formatPhoneNumber(phone.val),
+        password: password.val,
+      },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            setUser(data);
+          }
+        },
+        onError: (error) => {
+          setLoginError(true);
+          setPhoneError(true);
+          setPasswordError(true);
+          setPhone({
+            val: "",
+            prev: "",
+          });
+          setPassword({
+            val: "",
+            prev: "",
+          });
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -80,15 +92,15 @@ export default function HomeScreen() {
       setPasswordError(false);
   }, [phone.val, password.val]);
 
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     const redirect = setTimeout(() => {
-  //       router.push("/(tabs)");
-  //     }, 0);
+  useEffect(() => {
+    if (isLoggedIn) {
+      const redirect = setTimeout(() => {
+        router.push("/(tabs)");
+      }, 0);
 
-  //     return () => clearTimeout(redirect);
-  //   }
-  // }, [isLoggedIn]);
+      return () => clearTimeout(redirect);
+    }
+  }, [isLoggedIn]);
 
   return (
     <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
