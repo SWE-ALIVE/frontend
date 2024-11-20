@@ -29,7 +29,6 @@ export default function ListScreen() {
         </ThemedView>
       </ThemedView>
     </ThemedView>
-    </ThemedView>
   );
 }
 
