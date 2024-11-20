@@ -4,11 +4,10 @@ import { Bold } from "@/components/common/Bold";
 import { Button } from "@/components/common/Button";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ListScreen() {
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView style={styles.container}>
       <ThemedText type="title1" style={{ marginBottom: 8 }}>
         가전제품 목록 페이지입니다.
       </ThemedText>
@@ -21,7 +20,7 @@ export default function ListScreen() {
           Open Developer Tools
         </Button>
       </ThemedView>
-    </SafeAreaView>
+    </ThemedView>
   );
 }
 

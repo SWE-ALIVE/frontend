@@ -1,12 +1,10 @@
-import { Tabs, useRouter } from "expo-router";
+import { Tabs } from "expo-router";
 import React from "react";
 
 import { AppBar } from "@/components/common/AppBar";
 import { ThemedText } from "@/components/common/ThemedText";
 import AnalysisIcon from "@/components/icons/Analysis";
-import BellIcon from "@/components/icons/Bell";
 import HomeIcon from "@/components/icons/Home";
-import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import PlusIcon from "@/components/icons/Plus";
 import ProfileIcon from "@/components/icons/Profile";
 import SyncIcon from "@/components/icons/Sync";
@@ -27,7 +25,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const activeColor = Colors[colorScheme ?? "light"].tint;
   const inactiveColor = "#9DB2CE";
-  const router = useRouter();
+
   return (
     <Tabs
       screenOptions={({ route }) => ({
@@ -36,6 +34,7 @@ export default function TabLayout() {
         tabBarStyle: {
           height: 96,
           paddingTop: 16,
+          display: route.name === "chat/[channel_url]" ? "none" : "flex",
         },
         tabBarLabel: ({ focused }) =>
           focused ? (
@@ -52,47 +51,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <HomeIcon color={color} width={24} height={24} />
           ),
-          header: () => (
-            <AppBar
-              title="LG MACS"
-              align="left"
-              rightIcons={[
-                {
-                  icon: (
-                    <PlusIcon
-                      width={24}
-                      height={24}
-                      color={Colors.light.text}
-                      strokeWidth={1}
-                    />
-                  ),
-                  onPress: () => console.log("Search"),
-                },
-                {
-                  icon: (
-                    <BellIcon
-                      width={24}
-                      height={24}
-                      color={Colors.light.text}
-                      strokeWidth={1}
-                    />
-                  ),
-                  onPress: () => console.log("Search"),
-                },
-                {
-                  icon: (
-                    <MoreVerticalIcon
-                      width={24}
-                      height={24}
-                      color={Colors.light.text}
-                      strokeWidth={1}
-                    />
-                  ),
-                  onPress: () => console.log("Search"),
-                },
-              ]}
-            />
-          ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen
@@ -151,6 +110,34 @@ export default function TabLayout() {
             <ProfileIcon color={color} width={24} height={24} />
           ),
           header: () => <AppBar />,
+        }}
+      />
+      <Tabs.Screen
+        name="chat/[channel_url]"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="chat/create_chat_room"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="chat/create_chat_name"
+        options={{
+          href: null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="chat/index"
+        options={{
+          href: null,
+          headerShown: false,
         }}
       />
     </Tabs>

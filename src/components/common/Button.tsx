@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/colors.constant";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React, { ReactNode } from "react";
 import {
@@ -6,7 +7,6 @@ import {
   TouchableOpacityProps,
 } from "react-native";
 import { ThemedText } from "./ThemedText";
-import { Colors } from "@/constants/colors.constant";
 
 type ButtonVariants = "outlined" | "filled" | "text" | "disabled";
 
@@ -14,12 +14,14 @@ type ButtonProps = {
   children: ReactNode;
   variant?: ButtonVariants;
   disabled?: boolean;
+  fullWidth?: boolean;
 } & TouchableOpacityProps;
 
 export const Button = ({
   children,
   disabled = false,
   variant = "filled",
+  fullWidth = false,
   ...props
 }: ButtonProps) => {
   const background = useThemeColor("background");
@@ -72,7 +74,7 @@ export const Button = ({
   };
   return (
     <TouchableOpacity
-      style={[styles.common, getVariantStyles()]}
+      style={[styles.common, getVariantStyles(), fullWidth && styles.fullWidth]}
       disabled={disabled}
       {...props}
     >
@@ -90,5 +92,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     alignItems: "center",
     justifyContent: "center",
+  },
+  fullWidth: {
+    width: "100%", // 가로 전체를 채움
   },
 });
