@@ -47,7 +47,7 @@ export default function HomeScreen() {
                 strokeWidth={1}
               />
             ),
-            onPress: () => console.log("Search"),
+            onPress: () => router.push("/(tabs)/inbox"),
           },
           {
             icon: (

@@ -8,13 +8,13 @@ export interface LoginRequest {
 export interface LoginResponse {
   id: string;
   name: string;
-  birth_date: string;
-  phone_number: string;
+  birthDate: string;
+  phoneNumber: string;
 }
 
-export const loginApi = async (
+export const login = async (
   credentials: LoginRequest
 ): Promise<LoginResponse> => {
-  const response = await instance.post("/login", credentials);
+  const response = await instance.post("/v1/auth/login", credentials);
   return response.data;
 };

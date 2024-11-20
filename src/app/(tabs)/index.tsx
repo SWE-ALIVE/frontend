@@ -33,7 +33,7 @@ export default function ReadyToConnectScreen() {
       setIsLoading(false);
       setIsConnected(true);
       router.push("/chat");
-    }, 5000);
+    }, 2000);
   };
   return (
     <ThemedView style={styles.container}>
@@ -95,7 +95,7 @@ export default function ReadyToConnectScreen() {
           직접 가전제품 가져오기
         </Button>
       </ThemedView>
-      <Loading isLoading={isLoading} duration={4000} />
+      <Loading isLoading={isLoading} duration={2000} />
     </ThemedView>
   );
 }

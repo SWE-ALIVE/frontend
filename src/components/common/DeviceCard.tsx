@@ -10,13 +10,16 @@ import Animated, {
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 export interface DeviceCardProps {
-  category: keyof typeof DeviceIconMap;
+  category?: keyof typeof DeviceIconMap;
   name: string;
   id: string;
   disabled?: boolean;
 }
 
-const DeviceCard = ({ category, name }: DeviceCardProps) => {
+const DeviceCard = ({
+  category = "AIR_CONDITIONER",
+  name,
+}: DeviceCardProps) => {
   const [isClicked, setIsClicked] = useState(false);
 
   const IconComponent = DeviceIconMap[category];

@@ -44,6 +44,7 @@ export default function TabLayout() {
           "chat/create_chat_name",
           "chat/[channel_url]",
           "exeAnalysis/[exeKey]",
+          "inbox",
         ].includes(route.name);
 
         return {
@@ -192,6 +193,13 @@ export default function TabLayout() {
               }}
             />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="inbox"
+        options={{
+          href: null,
+          headerShown: false,
         }}
       />
     </Tabs>

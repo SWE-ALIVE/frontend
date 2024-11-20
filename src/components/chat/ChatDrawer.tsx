@@ -1,6 +1,8 @@
 import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/colors.constant";
+import { getDevices } from "@/service/device.service";
 import Feather from "@expo/vector-icons/Feather";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
@@ -23,6 +25,15 @@ type ChatModalProps = {
 export function ChatModal({ isVisible, onClose, name }: ChatModalProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+
+  const { data: devices, error } = useQuery({
+    queryKey: ["devices"],
+    queryFn: async () => {
+      const response = await getDevices();
+      console.log(response.members);
+      return response.members;
+    },
+  });
 
   const handlePress = (onPress: () => void) => {
     onClose();
@@ -76,15 +87,17 @@ export function ChatModal({ isVisible, onClose, name }: ChatModalProps) {
             onPress={() => {}}
           />
           <FlatList
-            data={dummyDevices}
+            data={devices}
             scrollEnabled={false}
-            renderItem={({ item }) => <DeviceCard {...item} />}
+            renderItem={({ item }) => (
+              <DeviceCard id={item.user_id} name={item.nickname} />
+            )}
             ItemSeparatorComponent={() => (
               <ThemedView
                 style={{ backgroundColor: Colors.light.lightGray, height: 0.5 }}
               />
             )}
-            keyExtractor={(device) => device.id}
+            keyExtractor={(device) => device.user_id}
           />
         </ThemedView>
         <ThemedView

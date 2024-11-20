@@ -1,16 +1,11 @@
-export interface Device {
-  category: DeviceCategory;
-  deviceName: string;
+import { Member } from "@/types/device";
+import { sendbird_instance } from "./axios-instance";
+
+interface getDeviceResponse {
+  members: Member[];
 }
 
-export type DeviceCategory =
-  | "WASHING_MACHINE"
-  | "DRYER"
-  | "REFRIGERATOR"
-  | "AIR_CONDITIONER"
-  | "TV"
-  | "HUMIDIFIER"
-  | "AIR_PURIFIER"
-  | "OVEN"
-  | "KIMCHI_REFRIGERATOR"
-  | "VACUUM_CLEANER";
+export const getDevices = async (): Promise<getDeviceResponse> => {
+  const res = await sendbird_instance("/channels/living_room/users");
+  return res.data;
+};

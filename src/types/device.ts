@@ -47,3 +47,13 @@ export type DeviceCategory =
   | "OVEN"
   | "KIMCHI_REFRIGERATOR"
   | "VACUUM_CLEANER";
+
+export interface Member {
+  user_id: string;
+  nickname: string;
+  profile_url: string;
+  last_seen_at: number;
+  state: string;
+  joined_ts: number;
+  role: string;
+}
