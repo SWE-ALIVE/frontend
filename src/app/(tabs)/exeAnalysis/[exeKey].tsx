@@ -2,9 +2,10 @@ import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, ScrollView } from "react-native";
 import { ThemedView } from "@/components/common/ThemedView";
 import { ThemedText } from "@/components/common/ThemedText";
-import { Colors } from "@/constants/colors.constant";
 import { EnergyCard } from "@/components/analysis/energyCard";
 import { ContentBox } from "@/components/analysis/contentBox";
+import "dayjs/locale/ko";
+
 interface ExeHistory {
   name: string;
   startTime: string;
@@ -17,19 +18,31 @@ interface ExeHistory {
   };
 }
 
+type SearchParams = {
+  day: string;
+  content?: string;
+  exeHistory?: string;
+  exeKey?: string;
+};
+
 export default function ExeAnalysisDetail() {
   const {
     day,
     content,
     exeHistory: exeHistoryString,
     exeKey,
-  } = useLocalSearchParams();
+  } = useLocalSearchParams<SearchParams>();
+
+  if (!exeHistoryString) {
+    return null;
+  }
+
+  const dayjs = require("dayjs");
+  dayjs.locale("ko");
 
   function formatDateToKorean(dateString: string): string {
     const date = new Date(dateString);
-    return `${date.getFullYear()}년 ${
-      date.getMonth() + 1
-    }월 ${date.getDate()}일`;
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
   }
 
   const formatDuration = (seconds: number) => {
@@ -45,8 +58,8 @@ export default function ExeAnalysisDetail() {
     return result.trim();
   };
 
-  const formattedDay = formatDateToKorean(day as string);
-  const exeHistory = JSON.parse(exeHistoryString as string) as ExeHistory[];
+  const formattedDay = formatDateToKorean(day);
+  const exeHistory = JSON.parse(exeHistoryString) as ExeHistory[];
   const totalWh = exeHistory.reduce(
     (sum, history) => sum + history.eleUsage.Wh,
     0
@@ -59,11 +72,13 @@ export default function ExeAnalysisDetail() {
     (sum, history) => sum + history.duration,
     0
   );
+
   return (
     <ScrollView style={styles.container}>
-      <ThemedView style={(styles.section, { flexDirection: "column", gap: 4 })}>
+      <ThemedView style={[styles.section, { flexDirection: "column", gap: 4 }]}>
         <ThemedText type="body">
-          {formattedDay} | {formatDuration(totalDuration)}
+          {formattedDay} {dayjs(day).format("ddd")}요일 |{" "}
+          {formatDuration(totalDuration)}
         </ThemedText>
         <ThemedText type="title1">{content}</ThemedText>
         <ThemedText type="body">주어진 임무를 완벽하게 마쳤어요!</ThemedText>
