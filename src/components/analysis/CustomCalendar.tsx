@@ -68,6 +68,7 @@ export const CustomCalendar = ({
     />
   );
 };
+
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",

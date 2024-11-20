@@ -5,11 +5,13 @@ import { StyleSheet, Image } from "react-native";
 import CoinImage from "@/assets/images/coin.png";
 import AnimatedNumbers from "react-native-animated-numbers";
 import { useEffect, useState } from "react";
+
 interface energyCardProps {
   fare: number;
   totalEnergy: number;
   Analogy: string;
 }
+
 export const EnergyCard = ({ fare, totalEnergy, Analogy }: energyCardProps) => {
   const [animateToNumber, setAnimateToNumber] = useState(0);
   useEffect(() => {

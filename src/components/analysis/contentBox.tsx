@@ -20,6 +20,7 @@ const formatTime = (dateTimeString: string) => {
 
   return `${period} ${formattedHours}:${formattedMinutes}`;
 };
+
 export const ContentBox = ({
   mode,
   startTime,
