@@ -1,10 +1,10 @@
-import { useLocalSearchParams } from "expo-router";
-import { StyleSheet, ScrollView } from "react-native";
-import { ThemedView } from "@/components/common/ThemedView";
-import { ThemedText } from "@/components/common/ThemedText";
-import { EnergyCard } from "@/components/analysis/EnergyCard";
 import { ContentBox } from "@/components/analysis/ContentBox";
+import { EnergyCard } from "@/components/analysis/energyCard";
+import { ThemedText } from "@/components/common/ThemedText";
+import { ThemedView } from "@/components/common/ThemedView";
 import "dayjs/locale/ko";
+import { useLocalSearchParams } from "expo-router";
+import { ScrollView, StyleSheet } from "react-native";
 
 interface ExeHistory {
   name: string;
@@ -87,7 +87,7 @@ export default function ExeAnalysisDetail() {
         <EnergyCard
           fare={totalFare}
           totalEnergy={totalWh}
-          Analogy="막대사탕 1개"
+          Analogy="막대사탕 "
         />
       </ThemedView>
       <ThemedView style={styles.section}>

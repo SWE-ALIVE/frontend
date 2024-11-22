@@ -26,11 +26,10 @@ export function ChatModal({ isVisible, onClose, name }: ChatModalProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
-  const { data: devices, error } = useQuery({
+  const { data: devices } = useQuery({
     queryKey: ["devices"],
     queryFn: async () => {
       const response = await getDevices();
-      console.log(response.members);
       return response.members;
     },
   });

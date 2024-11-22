@@ -2,8 +2,6 @@ import { Message, MessageBody } from "@/types/chat";
 import { sendbird_instance } from "./axios-instance";
 
 export const sendMessage = async (message: MessageBody): Promise<Message> => {
-  console.log(message);
-
   const response = await sendbird_instance.post("/messages", message);
   return response.data;
 };

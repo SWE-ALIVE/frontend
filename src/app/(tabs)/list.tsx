@@ -1,33 +1,76 @@
-import { StyleSheet } from "react-native";
-
-import { Bold } from "@/components/common/Bold";
-import { Button } from "@/components/common/Button";
+import { Loading } from "@/components/common/Loading";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
+import DeviceList from "@/components/list/deviceList";
+import { Colors } from "@/constants/colors.constant";
+import { getUserDevices } from "@/service/device.service";
+import { useUserStore } from "@/stores/useUserStore";
+import { useQuery } from "@tanstack/react-query";
+import { FlatList, ScrollView, StyleSheet } from "react-native";
 
 export default function ListScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title1" style={{ marginBottom: 8 }}>
-        가전제품 목록 페이지입니다.
-      </ThemedText>
-      <ThemedView>
-        <ThemedText type="title1" style={{ marginBottom: 16 }}>
-          볼드체를 사용하기 위해서는 <Bold type="title1">볼드 컴포넌트</Bold>를
-          사용하세요.
-        </ThemedText>
-        <Button variant="filled" onPress={() => {}}>
-          Open Developer Tools
-        </Button>
+  const userId = useUserStore((state) => state.user?.id);
+  const {
+    data: userDevices,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["userDevices", userId],
+    queryFn: () => {
+      if (!userId) throw new Error("User ID is required");
+      return getUserDevices(userId);
+    },
+    enabled: !!userId,
+  });
+  const deviceList =
+    userDevices?.map((device) => ({
+      category: device.category,
+      name: device.deviceName,
+      id: device.deviceId,
+    })) || [];
+  if (isLoading) {
+    return (
+      <ThemedView style={styles.container}>
+        <Loading isLoading={true} />
       </ThemedView>
-    </ThemedView>
+    );
+  }
+
+  if (error) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText>에러가 발생했습니다.{error.message}</ThemedText>
+      </ThemedView>
+    );
+  }
+  return (
+    <ScrollView style={styles.container}>
+      <ThemedView>
+        <ThemedView style={{ marginBottom: 24 }}>
+          <ThemedText type="title1">가전제품 목록</ThemedText>
+        </ThemedView>
+        <ThemedView>
+          <FlatList
+            data={deviceList}
+            scrollEnabled={false}
+            renderItem={({ item }) => <DeviceList {...item} />}
+            ItemSeparatorComponent={() => (
+              <ThemedView
+                style={{ backgroundColor: Colors.light.lightGray, height: 0.5 }}
+              />
+            )}
+            keyExtractor={(device) => device.id}
+          />
+        </ThemedView>
+      </ThemedView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 32,
+    paddingHorizontal: 24,
     flex: 1,
-    justifyContent: "center",
+    backgroundColor: Colors.light.background,
   },
 });
