@@ -28,7 +28,6 @@ const DeviceList = ({ category, name, id }: DeviceListProp) => {
       params: { appKey, category, translatedCategory, name },
     });
   };
-  const [isClicked, setIsClicked] = useState(false);
 
   const IconComponent = DeviceIconMap[category];
 
@@ -76,16 +75,10 @@ const DeviceList = ({ category, name, id }: DeviceListProp) => {
           />
         </Animated.View>
         <ThemedView style={{ flexDirection: "column" }}>
-          <ThemedText
-            type="subhead"
-            color={isClicked ? Colors.light.lightGray : Colors.light.black}
-          >
+          <ThemedText type="subhead" color={Colors.light.black}>
             {TranslateDeviceName[category]}
           </ThemedText>
-          <ThemedText
-            type="body"
-            color={isClicked ? Colors.light.lightGray : Colors.light.lowGray}
-          >
+          <ThemedText type="body" color={Colors.light.lowGray}>
             {name}
           </ThemedText>
         </ThemedView>

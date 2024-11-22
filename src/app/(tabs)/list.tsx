@@ -1,3 +1,4 @@
+import { Loading } from "@/components/common/Loading";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import DeviceList from "@/components/list/deviceList";
@@ -30,7 +31,7 @@ export default function ListScreen() {
   if (isLoading) {
     return (
       <ThemedView style={styles.container}>
-        <ThemedText>로딩중...</ThemedText>
+        <Loading isLoading={true} />
       </ThemedView>
     );
   }
@@ -45,10 +46,9 @@ export default function ListScreen() {
   return (
     <ScrollView style={styles.container}>
       <ThemedView>
-        <ThemedText type="title1">가전제품 목록</ThemedText>
-        <ThemedView
-          style={{ marginBottom: 24, flexDirection: "column", gap: 8 }}
-        ></ThemedView>
+        <ThemedView style={{ marginBottom: 24 }}>
+          <ThemedText type="title1">가전제품 목록</ThemedText>
+        </ThemedView>
         <ThemedView>
           <FlatList
             data={deviceList}
