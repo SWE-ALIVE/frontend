@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/colors.constant";
 import { DeviceIconMap, TranslateDeviceName } from "@/types/device";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Animated, {
@@ -7,9 +8,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { ThemedView } from "../common/ThemedView";
 import { ThemedText } from "../common/ThemedText";
-import { useRouter } from "expo-router";
+import { ThemedView } from "../common/ThemedView";
 
 export interface DeviceListProp {
   category: keyof typeof DeviceIconMap;
@@ -23,7 +23,6 @@ const DeviceList = ({ category, name, id }: DeviceListProp) => {
   const router = useRouter();
   const translatedCategory = TranslateDeviceName[category];
   const handlePress = () => {
-    console.log("pushed");
     router.push({
       pathname: "/appDetail/[appKey]",
       params: { appKey, category, translatedCategory, name },

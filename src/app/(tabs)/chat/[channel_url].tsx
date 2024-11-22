@@ -37,8 +37,6 @@ export default function ChatScreen() {
         limit: 12,
         message_ts: "",
       });
-      console.log(response.messages);
-
       return response.messages;
     },
   });

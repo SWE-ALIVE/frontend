@@ -47,7 +47,10 @@ export const EnergyCard = ({ fare, totalEnergy, Analogy }: energyCardProps) => {
         <Image source={CoinImage} style={{ width: 105, height: 105 }}></Image>
       </ThemedView>
       <ThemedView style={styles.bottomText}>
-        <ThemedText type="body">{Analogy} 금액만큼 사용중</ThemedText>
+        <ThemedText type="body">
+          {Analogy}
+          {(fare / 200).toFixed(1)}개 금액만큼 사용중
+        </ThemedText>
       </ThemedView>
     </ThemedView>
   );

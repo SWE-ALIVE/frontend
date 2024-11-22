@@ -11,17 +11,14 @@ interface ExeLogBoxProps {
   duration: number;
   status: string;
 }
-const formatTime = (dateTimeString: string) => {
-  const date = new Date(dateTimeString);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+const formatTime = (timeString: string) => {
+  const [hours, minutes] = timeString.split(":").map(Number);
   const period = hours >= 12 ? "오후" : "오전";
   const formattedHours = hours % 12 || 12;
   const formattedMinutes = minutes.toString().padStart(2, "0");
 
   return `${period} ${formattedHours}:${formattedMinutes}`;
 };
-
 export const ExeLogBox = ({
   usageDate,
   mode,

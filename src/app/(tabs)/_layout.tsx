@@ -1,5 +1,3 @@
-import { Tabs, usePathname, useRouter } from "expo-router";
-import React from "react";
 import { AppBar } from "@/components/common/AppBar";
 import { ThemedText } from "@/components/common/ThemedText";
 import AnalysisIcon from "@/components/icons/Analysis";
@@ -11,6 +9,8 @@ import WalletIcon from "@/components/icons/Wallet";
 import { Colors } from "@/constants/colors.constant";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import Feather from "@expo/vector-icons/Feather";
+import { Tabs, usePathname, useRouter } from "expo-router";
+import React from "react";
 
 const ROUTE_TITLES = {
   index: "홈",
@@ -189,7 +189,7 @@ export default function TabLayout() {
                     color={Colors.light.lowGray}
                   />
                 ),
-                onPress: () => router.back(),
+                onPress: () => router.push("/(tabs)/analysis"),
               }}
             />
           ),

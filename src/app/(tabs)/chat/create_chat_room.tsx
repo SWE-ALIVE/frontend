@@ -2,9 +2,11 @@ import { AppBar } from "@/components/common/AppBar";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
-import { Device } from "@/service/device.service";
+import { Device, getUserDevices, UserDevice } from "@/service/device.service";
+import { useUserStore } from "@/stores/useUserStore";
 import { TranslateDeviceName } from "@/types/device";
 import Feather from "@expo/vector-icons/Feather";
+import { useQuery } from "@tanstack/react-query";
 import Checkbox from "expo-checkbox";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -12,13 +14,25 @@ import { FlatList, StyleSheet } from "react-native";
 
 export default function CreateChatRoomScreen() {
   const router = useRouter();
-  const [selectedDevices, setSelectedDevices] = useState<Device[]>([]);
-
-  const toggleDeviceSelection = (device: Device) => {
+  const [selectedDevices, setSelectedDevices] = useState<UserDevice[]>([]);
+  const userId = useUserStore((state) => state.user?.id);
+  const {
+    data: userDevices,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["userDevices", userId],
+    queryFn: () => {
+      if (!userId) throw new Error("User ID is required");
+      return getUserDevices(userId);
+    },
+    enabled: !!userId,
+  });
+  const toggleDeviceSelection = (device: UserDevice) => {
     setSelectedDevices(
       (prev) =>
-        prev.some((d) => d.deviceName === device.deviceName)
-          ? prev.filter((d) => d.deviceName !== device.deviceName) // 선택 해제
+        prev.some((d) => d.deviceId === device.deviceId)
+          ? prev.filter((d) => d.deviceId !== device.deviceId) // 선택 해제
           : [...prev, device] // 선택 추가
     );
   };
@@ -54,12 +68,12 @@ export default function CreateChatRoomScreen() {
       <ThemedView style={{ marginTop: 24, marginHorizontal: 16, flex: 1 }}>
         <ThemedText type="title3">대화할 제품을 선택해주세요</ThemedText>
         <FlatList
-          data={devices}
+          data={userDevices}
           renderItem={({ item }) => (
             <SelectDevice
               device={item}
               isSelected={selectedDevices.some(
-                (d) => d.deviceName === item.deviceName
+                (d) => d.deviceId === item.deviceId
               )}
               toggleSelection={() => toggleDeviceSelection(item)}
             />

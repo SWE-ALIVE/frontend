@@ -87,7 +87,7 @@ export default function ExeAnalysisDetail() {
         <EnergyCard
           fare={totalFare}
           totalEnergy={totalWh}
-          Analogy="막대사탕 1개"
+          Analogy="막대사탕 "
         />
       </ThemedView>
       <ThemedView style={styles.section}>

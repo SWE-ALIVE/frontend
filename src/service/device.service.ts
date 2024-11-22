@@ -43,33 +43,31 @@ interface Action {
   endTime: string;
 }
 
-export interface DeviceUsageResponse {
+export interface DeviceUsage {
   deviceName: string;
-  chatRooms: ChatRoom[];
+  channels: Channel[];
   actions: Action[];
 }
 
-interface ErrorResponse {
-  status: string;
-  message: string;
-  error_code: number;
+interface Channel {
+  channelName: string;
+  channelDevices: string[];
 }
 
-interface DeviceUsageRequest {
-  user_id: number;
-  device_id: number;
+interface Action {
+  actionDescription: string;
+  usageDate: string;
+  startTime: string;
+  endTime: string;
 }
-
 export const getDeviceUsage = async (
   userId: string,
   deviceId: string
-): Promise<DeviceUsageResponse> => {
+): Promise<DeviceUsage> => {
   const response = await instance.post("/v1/device-usage", {
     user_id: userId,
     device_id: deviceId,
   });
-  console.log(response.data);
-
   return response.data;
 };
 export const getUserDevices = async (userId: string): Promise<UserDevice[]> => {

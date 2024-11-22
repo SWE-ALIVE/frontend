@@ -1,11 +1,11 @@
-import { FlatList, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
+import DeviceList from "@/components/list/deviceList";
 import { Colors } from "@/constants/colors.constant";
-import DeviceList, { DeviceListProp } from "@/components/list/deviceList";
-import { useQuery } from "@tanstack/react-query";
 import { getUserDevices } from "@/service/device.service";
 import { useUserStore } from "@/stores/useUserStore";
+import { useQuery } from "@tanstack/react-query";
+import { FlatList, ScrollView, StyleSheet } from "react-native";
 
 export default function ListScreen() {
   const userId = useUserStore((state) => state.user?.id);
@@ -43,7 +43,7 @@ export default function ListScreen() {
     );
   }
   return (
-    <ThemedView style={styles.container}>
+    <ScrollView style={styles.container}>
       <ThemedView>
         <ThemedText type="title1">가전제품 목록</ThemedText>
         <ThemedView
@@ -63,7 +63,7 @@ export default function ListScreen() {
           />
         </ThemedView>
       </ThemedView>
-    </ThemedView>
+    </ScrollView>
   );
 }
 
@@ -74,30 +74,3 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
 });
-// const dummyDevices: DeviceListProp[] = [
-//   {
-//     category: "WASHING_MACHINE",
-//     name: "LG 통돌이 세탁기",
-//     id: "1",
-//   },
-//   {
-//     category: "DRYER",
-//     name: "LG 트롬 오브제컬렉션 건조기",
-//     id: "2",
-//   },
-//   {
-//     category: "REFRIGERATOR",
-//     name: "LG 디오스 오브제컬렉션 빌트인 타입",
-//     id: "3",
-//   },
-//   {
-//     category: "AIR_CONDITIONER",
-//     name: "LG 휘센 벽걸이에어컨",
-//     id: "4",
-//   },
-//   {
-//     category: "TV",
-//     name: "LG 울트라 HD TV (스탠드형)",
-//     id: "5",
-//   },
-// ];
