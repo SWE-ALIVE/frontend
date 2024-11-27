@@ -25,7 +25,6 @@ type ChatParams = {
 
 export default function ChatScreen() {
   const queryClient = useQueryClient();
-
   const userId = useUserStore((state) => state.user?.id);
 
   const { channel_url, channel_name } = useLocalSearchParams<ChatParams>();
@@ -54,11 +53,22 @@ export default function ChatScreen() {
   const { data: userChatRooms, isLoading: isDeviceLoading } = useQuery({
     queryKey: ["channel", userId],
     queryFn: async () => {
+      console.log("쿼리 시작", { userId }); // enabled 조건 확인
+
       if (!userId) throw new Error("User ID is required");
       const response = await getChatRoom(userId);
+      console.log("asdfasdfasdf" + response);
+      if (response && response.length > 0) {
+      }
+      console.log(userChatRooms);
       return response;
     },
-    enabled: !!userId,
+    // enabled: !!userId,
+    enabled: !!userId, // 데이터가 로드되면 더 이상 요청하지 않음
+    retry: 5, // Maximum 3 retry attempts
+    retryDelay: 1000,
+    refetchInterval: 3000,
+    refetchIntervalInBackground: false,
   });
 
   const currentChannelDevices =
@@ -67,6 +77,7 @@ export default function ChatScreen() {
   const deviceNicknames = currentChannelDevices.map(
     (device) => device.nickname
   );
+  console.log("새롭게 생성.." + currentChannelDevices);
   useEffect(() => {
     setMessage((prev) => ({
       ...prev,
@@ -164,7 +175,8 @@ export default function ChatScreen() {
           {messages &&
           !isMessageLoading &&
           userChatRooms &&
-          !isDeviceLoading ? (
+          !isDeviceLoading &&
+          currentChannelDevices.length > 0 ? (
             <>
               {/* <ThemedView style={styles.inviteContainer}>
                 {deviceNicknames.map((nickname, index) => (

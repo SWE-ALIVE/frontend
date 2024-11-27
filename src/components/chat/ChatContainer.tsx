@@ -61,6 +61,7 @@ const ChatContainer = ({
       </View>
     );
   }, []);
+  console.log(deviceNicknames);
 
   return (
     <ScrollView
@@ -75,19 +76,27 @@ const ChatContainer = ({
       }}
       showsVerticalScrollIndicator={false}
     >
-      <ThemedView style={styles.inviteContainer}>
-        {deviceNicknames.map((nickname, index) => (
-          <ThemedText key={index} type="body" color={Colors.light.tint}>
-            {nickname}
-            {index !== deviceNicknames.length - 1 ? ", " : ""}
-          </ThemedText>
-        ))}
-        <ThemedText type="body" color={Colors.light.tint}>
-          를 초대했습니다.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.messagesContainer}>
-        {messages.map(renderMessage)}
+      <ThemedView>
+        {deviceNicknames ? (
+          <>
+            <ThemedView style={styles.inviteContainer}>
+              {deviceNicknames.map((nickname, index) => (
+                <ThemedText key={index} type="body" color={Colors.light.tint}>
+                  {nickname}
+                  {index !== deviceNicknames.length - 1 ? ", " : ""}
+                </ThemedText>
+              ))}
+              <ThemedText type="body" color={Colors.light.tint}>
+                를 초대했습니다.
+              </ThemedText>
+            </ThemedView>
+            <ThemedView style={styles.messagesContainer}>
+              {messages.map(renderMessage)}
+            </ThemedView>
+          </>
+        ) : (
+          <ThemedText>로딩중</ThemedText>
+        )}
       </ThemedView>
     </ScrollView>
   );
