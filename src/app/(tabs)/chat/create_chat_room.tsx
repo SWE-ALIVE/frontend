@@ -8,8 +8,8 @@ import { TranslateDeviceName } from "@/types/device";
 import Feather from "@expo/vector-icons/Feather";
 import { useQuery } from "@tanstack/react-query";
 import Checkbox from "expo-checkbox";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
 export default function CreateChatRoomScreen() {
@@ -37,12 +37,11 @@ export default function CreateChatRoomScreen() {
     );
   };
 
-  useEffect(() => {
-    return () => {
+  useFocusEffect(
+    useCallback(() => {
       setSelectedDevices([]);
-    };
-  }, []);
-
+    }, [])
+  );
   return (
     <ThemedView style={{ flex: 1 }}>
       <AppBar

@@ -9,9 +9,14 @@ import { ChatBubble } from "./ChatBubble";
 interface ChatContainerProps {
   messages: Message[];
   deviceNicknames: string[];
+  isLoading?: boolean;
 }
 
-const ChatContainer = ({ messages, deviceNicknames }: ChatContainerProps) => {
+const ChatContainer = ({
+  messages,
+  deviceNicknames,
+  isLoading = false,
+}: ChatContainerProps) => {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const scrollToBottom = useCallback(

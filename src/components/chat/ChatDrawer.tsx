@@ -22,6 +22,7 @@ type ChatModalProps = {
   onClose: () => void;
   name: string;
   userChatRooms?: UserChatRooms;
+  channelUrl: string;
 };
 
 export function ChatModal({
@@ -29,6 +30,7 @@ export function ChatModal({
   onClose,
   name,
   userChatRooms,
+  channelUrl,
 }: ChatModalProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -119,10 +121,12 @@ export function ChatModal({
 
               return (
                 <DeviceCard
+                  channelId={channelUrl}
                   id={item.id}
                   name={item.name}
                   category={deviceCategory}
                   nickname={item.nickname}
+                  deviceStatus={item.device_status}
                 />
               );
             }}

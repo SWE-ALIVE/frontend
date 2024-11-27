@@ -1,6 +1,11 @@
 import { Member } from "@/types/device";
 import { instance, sendbird_instance } from "./axios-instance";
 
+interface deviceToggleRequest {
+  channel_id: string;
+  device_id: string;
+  device_status: boolean;
+}
 interface getDeviceResponse {
   members: Member[];
 }
@@ -76,4 +81,10 @@ export const getUserDevices = async (userId: string): Promise<UserDevice[]> => {
   const response = await instance.get(`/v1/devices/users/${userId}`);
 
   return response.data;
+};
+
+export const toggleDeviceStatus = async (
+  request: deviceToggleRequest
+): Promise<void> => {
+  await instance.patch("/v1/devices/status", request);
 };

@@ -210,6 +210,7 @@ export default function ChatScreen() {
           onClose={close}
           name={channel_name}
           userChatRooms={userChatRooms}
+          channelUrl={channel_url}
         />
       </ThemedView>
     </KeyboardAvoidingView>
