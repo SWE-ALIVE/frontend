@@ -8,23 +8,30 @@ import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import PlusIcon from "@/components/icons/Plus";
 import { Colors } from "@/constants/colors.constant";
 import { getChannels } from "@/service/channel.service";
+import { useUserStore } from "@/stores/useUserStore";
 import { Message } from "@/types/chat";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { FlatList, StyleSheet } from "react-native";
 export default function HomeScreen() {
+  const userId = useUserStore((state) => state.user?.id);
+
   const router = useRouter();
   const { data: channels, error } = useQuery({
-    queryKey: ["channels"],
+    queryKey: ["channels", userId],
     queryFn: async () => {
-      const response = await getChannels("zxvm5962");
+      if (!userId) throw new Error("User ID is required");
+      const response = await getChannels(userId);
       return response.channels;
     },
+    enabled: !!userId,
   });
+  console.log(error);
+
   return (
     <ThemedView style={styles.container}>
       <AppBar
-        title="LG MACS"
+        title="LG ALIVE"
         align="left"
         rightIcons={[
           {

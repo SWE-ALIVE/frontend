@@ -16,8 +16,9 @@ export interface Device {
 
 export interface UserDevice {
   category: DeviceCategory;
-  deviceId: string;
-  deviceName: string;
+  device_id: string;
+  name: string;
+  nickname: string;
 }
 
 export type DeviceCategory =
@@ -37,10 +38,10 @@ interface ChatRoom {
 }
 
 interface Action {
-  actionDescription: string;
-  usageDate: string;
-  startTime: string;
-  endTime: string;
+  action_description: string;
+  // usageDate: string;
+  start_time: string;
+  end_time: string;
 }
 
 export interface DeviceUsage {
@@ -50,15 +51,16 @@ export interface DeviceUsage {
 }
 
 interface Channel {
-  channelName: string;
-  channelDevices: string[];
+  channel_name: string;
+  channel_id: string;
+  channel_devices: string[];
 }
 
 interface Action {
-  actionDescription: string;
-  usageDate: string;
-  startTime: string;
-  endTime: string;
+  action_description: string;
+  // usageDate: string;
+  start_time: string;
+  end_time: string;
 }
 export const getDeviceUsage = async (
   userId: string,
@@ -71,7 +73,9 @@ export const getDeviceUsage = async (
   return response.data;
 };
 export const getUserDevices = async (userId: string): Promise<UserDevice[]> => {
-  const response = await instance.get(`/v1/users/${userId}/devices`);
+  const response = await instance.get(`/v1/devices/users/${userId}`);
 
+  console.log(response.data);
+  console.log(userId);
   return response.data;
 };

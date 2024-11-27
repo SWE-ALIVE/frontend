@@ -28,7 +28,8 @@ export default function AppDetailScreen() {
   const { data: channels = [], error: channelError } = useQuery({
     queryKey: ["channels", appKey],
     queryFn: async () => {
-      const response = await getChannels("zxvm5962");
+      if (!userId) throw new Error("user Id is required");
+      const response = await getChannels(userId);
       return response.channels;
     },
     enabled: !!appKey,
@@ -36,6 +37,7 @@ export default function AppDetailScreen() {
   if (channelError) {
     console.log("channel Error" + channelError.message);
   }
+  console.log(channels);
 
   const { data: deviceUsage, error: deviceError } = useQuery({
     queryKey: ["deviceUsage", appKey, userId],
@@ -49,26 +51,33 @@ export default function AppDetailScreen() {
   if (deviceError) {
     console.log("device Error" + deviceError.message);
   }
+  console.log(deviceUsage);
 
   const IconComponent = DeviceIconMap[category];
-
+  const formatDateTime = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toISOString().slice(0, 19); // Format: YYYY-MM-DDTHH:mm:ss
+  };
+  const calculateDuration = (startTime: string, endTime: string) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    return Math.round((end.getTime() - start.getTime()) / (1000 * 60));
+  };
   const renderActions = () => {
     if (!deviceUsage?.actions?.length) {
       return <ThemedText>실행 내역이 없습니다.</ThemedText>;
     }
 
     return deviceUsage.actions.map((action, index) => {
-      const startDateTime = `${action.usageDate}T${action.startTime}:00`;
-      const endDateTime = `${action.usageDate}T${action.endTime}:00`;
-      const duration =
-        (new Date(endDateTime).getTime() - new Date(startDateTime).getTime()) /
-        (1000 * 60);
+      const startDateTime = formatDateTime(action.start_time);
+      const endDateTime = formatDateTime(action.end_time);
+      const duration = calculateDuration(action.start_time, action.end_time);
 
       return (
         <ThemedView key={index} style={{ marginVertical: 4 }}>
           <ExeLogBox
-            usageDate={action.usageDate}
-            mode={action.actionDescription}
+            usageDate={new Date(startDateTime).toISOString().split("T")[0]}
+            mode={action.action_description}
             startTime={startDateTime}
             endTime={endDateTime}
             duration={duration}
@@ -174,13 +183,12 @@ export default function AppDetailScreen() {
           ) : (
             deviceUsage.channels.map((room) => {
               const channelInfo = channels.find(
-                (channel) => channel.name === room.channelName
-                // name <=> url
+                (channel) => channel.channel_url === room.channel_id
               );
 
               return channelInfo ? (
                 <ParticipatingChatRoom
-                  key={room.channelName}
+                  key={room.channel_name}
                   {...channelInfo}
                 />
               ) : null;

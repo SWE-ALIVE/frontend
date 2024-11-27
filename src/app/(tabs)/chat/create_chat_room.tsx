@@ -9,7 +9,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { useQuery } from "@tanstack/react-query";
 import Checkbox from "expo-checkbox";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
 export default function CreateChatRoomScreen() {
@@ -31,11 +31,17 @@ export default function CreateChatRoomScreen() {
   const toggleDeviceSelection = (device: UserDevice) => {
     setSelectedDevices(
       (prev) =>
-        prev.some((d) => d.deviceId === device.deviceId)
-          ? prev.filter((d) => d.deviceId !== device.deviceId) // 선택 해제
+        prev.some((d) => d.device_id === device.device_id)
+          ? prev.filter((d) => d.device_id !== device.device_id) // 선택 해제
           : [...prev, device] // 선택 추가
     );
   };
+
+  useEffect(() => {
+    return () => {
+      setSelectedDevices([]);
+    };
+  }, []);
 
   return (
     <ThemedView style={{ flex: 1 }}>
@@ -73,12 +79,12 @@ export default function CreateChatRoomScreen() {
             <SelectDevice
               device={item}
               isSelected={selectedDevices.some(
-                (d) => d.deviceId === item.deviceId
+                (d) => d.device_id === item.device_id
               )}
               toggleSelection={() => toggleDeviceSelection(item)}
             />
           )}
-          keyExtractor={(device) => device.deviceName}
+          keyExtractor={(device) => device.device_id}
           contentContainerStyle={styles.container}
           ItemSeparatorComponent={() => (
             <ThemedView
@@ -107,7 +113,7 @@ const SelectDevice = ({
   isSelected,
   toggleSelection,
 }: {
-  device: Device;
+  device: UserDevice;
   isSelected: boolean;
   toggleSelection: () => void;
 }) => {
@@ -117,7 +123,7 @@ const SelectDevice = ({
         <ThemedText type="callout" style={{ fontFamily: "LGEIHeadline-Bold" }}>
           {TranslateDeviceName[device.category]}
         </ThemedText>
-        <ThemedText type="body">{device.deviceName}</ThemedText>
+        <ThemedText type="body">{device.name}</ThemedText>
       </ThemedView>
       <Checkbox
         value={isSelected}

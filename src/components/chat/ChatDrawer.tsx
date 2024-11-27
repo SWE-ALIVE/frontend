@@ -1,8 +1,9 @@
 import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/colors.constant";
-import { getDevices } from "@/service/device.service";
+import { UserChatRooms } from "@/service/channel.service";
+import { useUserStore } from "@/stores/useUserStore";
+import { DeviceCategory, DeviceIconMap } from "@/types/device";
 import Feather from "@expo/vector-icons/Feather";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
@@ -13,26 +14,53 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import DeviceCard, { DeviceCardProps } from "../common/DeviceCard";
+import DeviceCard from "../common/DeviceCard";
 import { ThemedView } from "../common/ThemedView";
 
 type ChatModalProps = {
   isVisible: boolean;
   onClose: () => void;
   name: string;
+  userChatRooms?: UserChatRooms;
 };
 
-export function ChatModal({ isVisible, onClose, name }: ChatModalProps) {
+export function ChatModal({
+  isVisible,
+  onClose,
+  name,
+  userChatRooms,
+}: ChatModalProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const userId = useUserStore((state) => state.user?.id);
 
-  const { data: devices } = useQuery({
-    queryKey: ["devices"],
-    queryFn: async () => {
-      const response = await getDevices();
-      return response.members;
-    },
-  });
+  // const { data: devices } = useQuery({
+  //   queryKey: ["devices"],
+  //   queryFn: async () => {
+  //     const response = await getDevices();
+  //     return response.members;
+  //   },
+  // });
+  // const { data: userChatRooms } = useQuery({
+  //   queryKey: ["channel", userId],
+  //   queryFn: async () => {
+  //     if (!userId) throw new Error("User ID is required");
+  //     const response = await getChatRoom(userId);
+
+  //     return response;
+  //   },
+  //   // userId가 없으면 query를 비활성화
+  //   enabled: !!userId,
+  // });
+  const isValidDeviceCategory = (
+    category: string
+  ): category is DeviceCategory => {
+    return Object.keys(DeviceIconMap).includes(category);
+  };
+  const currentChannelDevices =
+    userChatRooms?.find((channel) => channel.channel_name === name)?.devices ||
+    [];
+  console.log(currentChannelDevices);
 
   const handlePress = (onPress: () => void) => {
     onClose();
@@ -80,23 +108,31 @@ export function ChatModal({ isVisible, onClose, name }: ChatModalProps) {
             label="가전제품 초대 / 삭제"
             onPress={() => handlePress(() => router.push("/list"))}
           />
-          <DrawerItem
-            label="대화상대 선택"
-            marginBottom={16}
-            onPress={() => {}}
-          />
+          <DrawerItem label=" 선택" marginBottom={16} onPress={() => {}} />
           <FlatList
-            data={devices}
+            data={currentChannelDevices}
             scrollEnabled={false}
-            renderItem={({ item }) => (
-              <DeviceCard id={item.user_id} name={item.nickname} />
-            )}
+            renderItem={({ item }) => {
+              // category 값이 유효한지 확인하고 기본값 설정
+              const deviceCategory = isValidDeviceCategory(item.category)
+                ? item.category
+                : "AIR_CONDITIONER"; // 기본값
+
+              return (
+                <DeviceCard
+                  id={item.id}
+                  name={item.name}
+                  category={deviceCategory}
+                  nickname={item.nickname}
+                />
+              );
+            }}
             ItemSeparatorComponent={() => (
               <ThemedView
                 style={{ backgroundColor: Colors.light.lightGray, height: 0.5 }}
               />
             )}
-            keyExtractor={(device) => device.user_id}
+            keyExtractor={(device) => device.id}
           />
         </ThemedView>
         <ThemedView
@@ -162,31 +198,3 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 });
-
-const dummyDevices: DeviceCardProps[] = [
-  {
-    category: "WASHING_MACHINE",
-    name: "LG 통돌이 세탁기",
-    id: "1",
-  },
-  {
-    category: "DRYER",
-    name: "LG 트롬 오브제컬렉션 건조기",
-    id: "2",
-  },
-  {
-    category: "REFRIGERATOR",
-    name: "LG 디오스 오브제컬렉션 빌트인 타입",
-    id: "3",
-  },
-  {
-    category: "AIR_CONDITIONER",
-    name: "LG 휘센 벽걸이에어컨",
-    id: "4",
-  },
-  {
-    category: "TV",
-    name: "LG 울트라 HD TV (스탠드형)",
-    id: "5",
-  },
-];

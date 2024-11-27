@@ -22,11 +22,14 @@ export default function ListScreen() {
     },
     enabled: !!userId,
   });
+  console.log(userId);
+  console.log("user:" + userDevices);
   const deviceList =
     userDevices?.map((device) => ({
       category: device.category,
-      name: device.deviceName,
-      id: device.deviceId,
+      name: device.name,
+      id: device.device_id,
+      nickname: device.nickname,
     })) || [];
   if (isLoading) {
     return (

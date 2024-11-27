@@ -8,13 +8,15 @@ import BellIcon from "@/components/icons/Bell";
 import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import { Colors } from "@/constants/colors.constant";
 import { useModal } from "@/hooks/useModal";
+import { getChatRoom } from "@/service/channel.service";
 import { getMessages } from "@/service/message.service";
+import { useUserStore } from "@/stores/useUserStore";
 import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 
 type ChatParams = {
   channel_url: string;
@@ -22,11 +24,14 @@ type ChatParams = {
 };
 
 export default function ChatScreen() {
+  const userId = useUserStore((state) => state.user?.id);
+
   const { channel_url, channel_name } = useLocalSearchParams<ChatParams>();
   const { isVisible, toggle, close } = useModal();
   const router = useRouter();
   const {
     data: messages,
+    isLoading: isMessageLoading,
     error,
     refetch,
   } = useQuery<Message[]>({
@@ -34,17 +39,35 @@ export default function ChatScreen() {
     queryFn: async () => {
       const response = await getMessages({
         channel_url,
-        limit: 12,
         message_ts: "",
       });
       return response.messages;
     },
+    enabled: !!userId && !!channel_url && !!channel_name,
   });
 
+  const { data: userChatRooms, isLoading: isDeviceLoading } = useQuery({
+    queryKey: ["channel", userId],
+    queryFn: async () => {
+      if (!userId) throw new Error("User ID is required");
+      const response = await getChatRoom(userId);
+      return response;
+    },
+    enabled: !!userId,
+  });
+
+  const currentChannelDevices =
+    userChatRooms?.find((channel) => channel.channel_id === channel_url)
+      ?.devices || [];
+  const deviceNicknames = currentChannelDevices.map(
+    (device) => device.nickname
+  );
+
+  console.log(currentChannelDevices);
   const [message, setMessage] = useState<MessageBody>({
     message: "",
     channel_url: channel_url,
-    user_id: "zxvm5962",
+    user_id: userId ?? "", // 기본값으로 빈 문자열 사용
   });
 
   const appendMessage = async (newMessage: Message) => {
@@ -61,72 +84,96 @@ export default function ChatScreen() {
   }, []);
 
   return (
-    <ThemedView style={styles.container}>
-      <AppBar
-        title={channel_name}
-        align="left"
-        leftIcon={{
-          icon: <Feather name="chevron-left" size={24} color="black" />,
-          onPress: () => router.push("/chat"),
-        }}
-        rightIcons={[
-          {
-            icon: (
-              <BellIcon
-                width={24}
-                height={24}
-                color={Colors.light.text}
-                strokeWidth={1}
-              />
-            ),
-            onPress: () => router.push("/(tabs)/inbox"),
-          },
-          {
-            icon: (
-              <MoreVerticalIcon
-                width={24}
-                height={24}
-                color={Colors.light.text}
-                strokeWidth={1}
-              />
-            ),
-            onPress: toggle,
-          },
-        ]}
-      />
-      <ThemedView style={{ paddingHorizontal: 16, flex: 1 }}>
-        {messages ? (
-          <>
-            <ThemedView style={styles.inviteContainer}>
-              <ThemedText type="body" color={Colors.light.tint}>
-                에어컨, 세탁기, 건조기, TV, 냉장고1, 냉장고2를 초대했습니다.
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <ThemedView style={styles.container}>
+        <AppBar
+          title={channel_name}
+          align="left"
+          leftIcon={{
+            icon: <Feather name="chevron-left" size={24} color="black" />,
+            onPress: () => router.push("/chat"),
+          }}
+          rightIcons={[
+            {
+              icon: (
+                <BellIcon
+                  width={24}
+                  height={24}
+                  color={Colors.light.text}
+                  strokeWidth={1}
+                />
+              ),
+              onPress: () => router.push("/(tabs)/inbox"),
+            },
+            {
+              icon: (
+                <MoreVerticalIcon
+                  width={24}
+                  height={24}
+                  color={Colors.light.text}
+                  strokeWidth={1}
+                />
+              ),
+              onPress: toggle,
+            },
+          ]}
+        />
+        <ThemedView style={{ paddingHorizontal: 16, flex: 1 }}>
+          {messages &&
+          !isMessageLoading &&
+          userChatRooms &&
+          !isDeviceLoading ? (
+            <>
+              {/* <ThemedView style={styles.inviteContainer}>
+                {deviceNicknames.map((nickname, index) => (
+                  <ThemedText key={index} type="body" color={Colors.light.tint}>
+                    {nickname}
+                    {index !== deviceNicknames.length - 1 ? ", " : ""}
+                  </ThemedText>
+                ))}
+                <ThemedText type="body" color={Colors.light.tint}>
+                  를 초대했습니다.
+                </ThemedText>
+              </ThemedView> */}
+              <ThemedView style={{ flex: 1, paddingBottom: 0 }}>
+                <ChatContainer
+                  messages={messages}
+                  deviceNicknames={deviceNicknames}
+                />
+              </ThemedView>
+            </>
+          ) : (
+            <View style={{ flex: 1 }} />
+          )}
+          {error && (
+            <ThemedView
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ThemedText type="body">
+                오류가 발생했습니다. 다시 시도해주세요.
               </ThemedText>
             </ThemedView>
-            <ChatContainer messages={messages} />
-          </>
-        ) : (
-          <View style={{ flex: 1 }} />
-        )}
-        {error && (
-          <ThemedView
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <ThemedText type="body">
-              오류가 발생했습니다. 다시 시도해주세요.
-            </ThemedText>
-          </ThemedView>
-        )}
-        <ChatInput
-          message={message}
-          setMessage={setMessage}
-          appendMessage={appendMessage}
+          )}
+          <ChatInput
+            message={message}
+            setMessage={setMessage}
+            appendMessage={appendMessage}
+          />
+        </ThemedView>
+        <ChatModal
+          isVisible={isVisible}
+          onClose={close}
+          name={channel_name}
+          userChatRooms={userChatRooms}
         />
       </ThemedView>
-      <ChatModal isVisible={isVisible} onClose={close} name={channel_name} />
-    </ThemedView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -145,6 +192,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.light.tint,
     borderRadius: 8,
+    flexWrap: "wrap",
   },
   chatContainer: {
     flexDirection: "column",

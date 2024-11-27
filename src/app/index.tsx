@@ -58,6 +58,7 @@ export default function HomeScreen() {
       });
       setIsLoading(false);
     } catch (err) {
+      console.log("error");
       setLoginError(true);
       setIsLoading(false);
     }
@@ -106,7 +107,7 @@ export default function HomeScreen() {
             LG
           </ThemedText>
           <ThemedText type="titleLarge" style={{ color: Colors.light.tint }}>
-            {" MACS"}
+            {" ALIVE"}
           </ThemedText>
         </ThemedView>
 

@@ -1,5 +1,5 @@
 import { Colors } from "@/constants/colors.constant";
-import { DeviceIconMap, TranslateDeviceName } from "@/types/device";
+import { DeviceIconMap } from "@/types/device";
 import React, { useState } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Animated, {
@@ -14,11 +14,13 @@ export interface DeviceCardProps {
   name: string;
   id: string;
   disabled?: boolean;
+  nickname: string;
 }
 
 const DeviceCard = ({
   category = "AIR_CONDITIONER",
   name,
+  nickname,
 }: DeviceCardProps) => {
   const [isClicked, setIsClicked] = useState(false);
 
@@ -61,7 +63,7 @@ const DeviceCard = ({
           type="subhead"
           color={isClicked ? Colors.light.lightGray : Colors.light.black}
         >
-          {TranslateDeviceName[category]}
+          {nickname}
         </ThemedText>
         <ThemedText
           type="body"
