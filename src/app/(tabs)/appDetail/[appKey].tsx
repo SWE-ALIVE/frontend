@@ -25,7 +25,11 @@ export default function AppDetailScreen() {
     name: string;
   }>();
   const userId = useUserStore((state) => state.user?.id);
-  const { data: channels = [], error: channelError } = useQuery({
+  const {
+    data: channels = [],
+    error: channelError,
+    isLoading: channelLoading,
+  } = useQuery({
     queryKey: ["channels", appKey],
     queryFn: async () => {
       if (!userId) throw new Error("user Id is required");
@@ -37,9 +41,12 @@ export default function AppDetailScreen() {
   if (channelError) {
     console.log("channel Error" + channelError.message);
   }
-  console.log(channels);
 
-  const { data: deviceUsage, error: deviceError } = useQuery({
+  const {
+    data: deviceUsage,
+    error: deviceError,
+    isLoading: deviceLoading,
+  } = useQuery({
     queryKey: ["deviceUsage", appKey, userId],
     queryFn: async () => {
       if (!userId || !appKey)
@@ -51,7 +58,6 @@ export default function AppDetailScreen() {
   if (deviceError) {
     console.log("device Error" + deviceError.message);
   }
-  console.log(deviceUsage);
 
   const IconComponent = DeviceIconMap[category];
   const formatDateTime = (dateStr: string) => {

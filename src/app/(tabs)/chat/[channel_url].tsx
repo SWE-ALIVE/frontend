@@ -13,7 +13,7 @@ import { getMessages } from "@/service/message.service";
 import { useUserStore } from "@/stores/useUserStore";
 import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
@@ -24,9 +24,12 @@ type ChatParams = {
 };
 
 export default function ChatScreen() {
+  const queryClient = useQueryClient();
+
   const userId = useUserStore((state) => state.user?.id);
 
   const { channel_url, channel_name } = useLocalSearchParams<ChatParams>();
+  console.log("This Channel : channel url" + channel_url);
   const { isVisible, toggle, close } = useModal();
   const router = useRouter();
   const {
@@ -44,6 +47,8 @@ export default function ChatScreen() {
       return response.messages;
     },
     enabled: !!userId && !!channel_url && !!channel_name,
+    refetchInterval: 1000, // 1초마다 자동으로 새 메시지 확인
+    refetchIntervalInBackground: false,
   });
 
   const { data: userChatRooms, isLoading: isDeviceLoading } = useQuery({
@@ -62,26 +67,60 @@ export default function ChatScreen() {
   const deviceNicknames = currentChannelDevices.map(
     (device) => device.nickname
   );
+  useEffect(() => {
+    setMessage((prev) => ({
+      ...prev,
+      message: "",
+      channel_url: channel_url,
+    }));
+  }, [channel_url]);
 
-  console.log(currentChannelDevices);
-  const [message, setMessage] = useState<MessageBody>({
+  // const [message, setMessage] = useState<MessageBody>({
+  //   message: "",
+  //   channel_url: channel_url,
+  //   user_id: userId ?? "", // 기본값으로 빈 문자열 사용
+  // });
+  const [message, setMessage] = useState<MessageBody>(() => ({
     message: "",
     channel_url: channel_url,
-    user_id: userId ?? "", // 기본값으로 빈 문자열 사용
-  });
+    user_id: userId ?? "",
+  }));
 
+  // const appendMessage = async (newMessage: Message) => {
+  //   if (messages) {
+  //     messages.push(newMessage);
+  //     refetch();
+  //   }
+  // };
   const appendMessage = async (newMessage: Message) => {
-    if (messages) {
-      messages.push(newMessage);
-      refetch();
-    }
+    // 캐시된 메시지 목록에 새 메시지를 즉시 추가 (UI 즉시 업데이트)
+    queryClient.setQueryData(
+      ["messages", channel_url],
+      (oldData: Message[] | undefined) => {
+        if (!oldData) return [newMessage];
+        return [...oldData, newMessage];
+      }
+    );
+
+    // 서버와 동기화하여 실제 데이터 확인
+    refetch();
   };
 
+  // 컴포넌트 언마운트 시 정리 작업 추가
   useEffect(() => {
     return () => {
+      queryClient.resetQueries({
+        queryKey: ["messages", channel_url],
+      });
       toggle();
     };
   }, []);
+
+  // useEffect(() => {
+  //   return () => {
+  //     toggle();
+  //   };
+  // }, []);
 
   return (
     <KeyboardAvoidingView

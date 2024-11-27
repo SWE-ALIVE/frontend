@@ -2,14 +2,45 @@ import { AppBar } from "@/components/common/AppBar";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
+import { createChatRoom } from "@/service/chat.service";
+import { UserDevice } from "@/service/device.service";
+import { useUserStore } from "@/stores/useUserStore";
 import Feather from "@expo/vector-icons/Feather";
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { StyleSheet, TextInput, TextInputProps } from "react-native";
+import { useMutation } from "@tanstack/react-query";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useMemo, useState } from "react";
+import { Alert, StyleSheet, TextInput, TextInputProps } from "react-native";
 
 export default function CreateChatNameScreen() {
+  const params = useLocalSearchParams<{ selectedDevices: string }>();
   const router = useRouter();
   const [chatName, setChatName] = useState("");
+  const selectedDevices: UserDevice[] = useMemo(() => {
+    if (!params.selectedDevices) return [];
+    return JSON.parse(params.selectedDevices);
+  }, [params.selectedDevices]);
+  const userId = useUserStore((state) => state.user?.id);
+
+  const createChatMutation = useMutation({
+    mutationFn: async () => {
+      if (!userId) throw new Error("User ID is required");
+      const deviceIds = [
+        ...selectedDevices.map((device) => device.device_id),
+        userId,
+      ];
+      return createChatRoom(chatName, deviceIds, [userId]);
+    },
+    onSuccess: () => {
+      router.push("/chat");
+    },
+    onError: (error) => {
+      Alert.alert(
+        "오류",
+        "채팅방 생성 중 오류가 발생했습니다. 다시 시도해주세요."
+      );
+    },
+  });
+  console.log(createChatMutation);
   return (
     <ThemedView style={{ flex: 1 }}>
       <AppBar
@@ -33,8 +64,10 @@ export default function CreateChatNameScreen() {
                 확인
               </ThemedText>
             ),
-            onPress: () => router.push("/chat"),
-            disabled: chatName.length === 0,
+            onPress: () => {
+              if (chatName.length === 0) return;
+              createChatMutation.mutate();
+            },
           },
         ]}
       />

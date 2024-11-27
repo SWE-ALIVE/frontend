@@ -75,7 +75,5 @@ export const getDeviceUsage = async (
 export const getUserDevices = async (userId: string): Promise<UserDevice[]> => {
   const response = await instance.get(`/v1/devices/users/${userId}`);
 
-  console.log(response.data);
-  console.log(userId);
   return response.data;
 };

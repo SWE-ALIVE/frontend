@@ -1,4 +1,6 @@
 import AirConditioner from "@/components/icons/devices/AirConditioner";
+import AirPurifier from "@/components/icons/devices/AirPurifier";
+import Cleaner from "@/components/icons/devices/Cleaner";
 import Dryer from "@/components/icons/devices/Dryer";
 import Refrigerator from "@/components/icons/devices/Refrigerator";
 import Tv from "@/components/icons/devices/Tv";
@@ -12,10 +14,10 @@ export const DeviceIconMap: Record<DeviceCategory, React.FC<IconProps>> = {
   TV: Tv,
   WASHING_MACHINE: WashingMachine,
   HUMIDIFIER: () => null, // Add appropriate component
-  AIR_PURIFIER: () => null, // Add appropriate component
+  AIR_PURIFIER: AirPurifier, // Add appropriate component
   OVEN: () => null, // Add appropriate component
   KIMCHI_REFRIGERATOR: () => null, // Add appropriate component
-  VACUUM_CLEANER: () => null, // Add appropriate component
+  VACUUM_CLEANER: Cleaner, // Add appropriate component
 };
 
 export const TranslateDeviceName: Record<keyof typeof DeviceIconMap, string> = {

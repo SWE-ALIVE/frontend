@@ -66,7 +66,12 @@ export default function CreateChatRoomScreen() {
                 다음
               </ThemedText>
             ),
-            onPress: () => router.push("/chat/create_chat_name"),
+            onPress: () =>
+              router.push({
+                pathname: "/chat/create_chat_name",
+                params: { selectedDevices: JSON.stringify(selectedDevices) },
+              }),
+            // onPress: () => router.push("/chat/create_chat_name"),
             disabled: selectedDevices.length === 0,
           },
         ]}

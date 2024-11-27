@@ -62,8 +62,12 @@ const ChatContainer = ({ messages, deviceNicknames }: ChatContainerProps) => {
       ref={scrollViewRef}
       style={styles.mainContainer}
       contentContainerStyle={styles.contentContainer}
-      onContentSizeChange={() => scrollToBottom(50)}
-      onLayout={() => scrollToBottom(50)}
+      onContentSizeChange={(width, height) => {
+        scrollViewRef.current?.scrollTo({
+          y: height,
+          animated: false,
+        });
+      }}
       showsVerticalScrollIndicator={false}
     >
       <ThemedView style={styles.inviteContainer}>
@@ -77,9 +81,9 @@ const ChatContainer = ({ messages, deviceNicknames }: ChatContainerProps) => {
           를 초대했습니다.
         </ThemedText>
       </ThemedView>
-      <View style={styles.messagesContainer}>
+      <ThemedView style={styles.messagesContainer}>
         {messages.map(renderMessage)}
-      </View>
+      </ThemedView>
     </ScrollView>
   );
 };
@@ -105,7 +109,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   messagesContainer: {
-    flex: 1,
+    flex: 0,
     paddingHorizontal: 16,
   },
   chatBubbleContainer: {

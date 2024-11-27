@@ -25,6 +25,9 @@ export default function HomeScreen() {
       return response.channels;
     },
     enabled: !!userId,
+    refetchInterval: 3000, // 3초마다 새로운 데이터 확인
+    refetchIntervalInBackground: false, // 앱이 백그라운드일 때는 폴링 중지
+    staleTime: 1000, // 데이터를 1초 동안 신선한 상태로 유지
   });
   console.log(error);
 

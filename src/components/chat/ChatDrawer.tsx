@@ -60,7 +60,6 @@ export function ChatModal({
   const currentChannelDevices =
     userChatRooms?.find((channel) => channel.channel_name === name)?.devices ||
     [];
-  console.log(currentChannelDevices);
 
   const handlePress = (onPress: () => void) => {
     onClose();
