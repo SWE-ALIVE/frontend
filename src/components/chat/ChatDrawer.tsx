@@ -2,7 +2,6 @@ import { ThemedText } from "@/components/common/ThemedText";
 import { Colors } from "@/constants/colors.constant";
 import { UserChatRooms } from "@/service/channel.service";
 import { deleteChatRoom } from "@/service/chat.service";
-import { useUserStore } from "@/stores/useUserStore";
 import { DeviceCategory, DeviceIconMap } from "@/types/device";
 import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
@@ -36,27 +35,8 @@ export function ChatModal({
 }: ChatModalProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const userId = useUserStore((state) => state.user?.id);
   const [isLoading, setIsLoading] = useState(false);
 
-  // const { data: devices } = useQuery({
-  //   queryKey: ["devices"],
-  //   queryFn: async () => {
-  //     const response = await getDevices();
-  //     return response.members;
-  //   },
-  // });
-  // const { data: userChatRooms } = useQuery({
-  //   queryKey: ["channel", userId],
-  //   queryFn: async () => {
-  //     if (!userId) throw new Error("User ID is required");
-  //     const response = await getChatRoom(userId);
-
-  //     return response;
-  //   },
-  //   // userId가 없으면 query를 비활성화
-  //   enabled: !!userId,
-  // });
   const handleDeleteChannel = async () => {
     try {
       setIsLoading(true);
@@ -64,18 +44,19 @@ export function ChatModal({
       console.log("채널 삭제 완료");
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsLoading(false);
-
       onClose();
-      router.back(); // 또는 router.push("/") 등 삭제 후 이동할 경로
+      router.back();
     } catch (error) {
       console.error("채널 삭제 실패:", error);
     }
   };
+
   const isValidDeviceCategory = (
     category: string
   ): category is DeviceCategory => {
     return Object.keys(DeviceIconMap).includes(category);
   };
+
   const currentChannelDevices =
     userChatRooms?.find((channel) => channel.channel_name === name)?.devices ||
     [];
@@ -133,11 +114,9 @@ export function ChatModal({
               data={currentChannelDevices}
               scrollEnabled={false}
               renderItem={({ item }) => {
-                // category 값이 유효한지 확인하고 기본값 설정
                 const deviceCategory = isValidDeviceCategory(item.category)
                   ? item.category
-                  : "AIR_CONDITIONER"; // 기본값
-
+                  : "AIR_CONDITIONER";
                 return (
                   <DeviceCard
                     channelId={channelUrl}

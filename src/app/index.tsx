@@ -28,8 +28,9 @@ export default function HomeScreen() {
   const [passwordError, setPasswordError] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
+  const setUser = useUserStore((state) => state.setUser);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
   const formatPhoneNumber = (number: string): string => {
     const cleaned = number.replace(/\D/g, "");
@@ -39,9 +40,6 @@ export default function HomeScreen() {
     }
     return number;
   };
-
-  const setUser = useUserStore((state) => state.setUser);
-  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
   const handleLogin = async () => {
     try {

@@ -9,14 +9,13 @@ import PlusIcon from "@/components/icons/Plus";
 import { Colors } from "@/constants/colors.constant";
 import { getChannels } from "@/service/channel.service";
 import { useUserStore } from "@/stores/useUserStore";
-import { Message } from "@/types/chat";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { FlatList, ScrollView, StyleSheet } from "react-native";
 export default function HomeScreen() {
   const userId = useUserStore((state) => state.user?.id);
-
   const router = useRouter();
+
   const { data: channels, error } = useQuery({
     queryKey: ["channels", userId],
     queryFn: async () => {
@@ -25,10 +24,11 @@ export default function HomeScreen() {
       return response.channels;
     },
     enabled: !!userId,
-    refetchInterval: 3000, // 3초마다 새로운 데이터 확인
-    refetchIntervalInBackground: false, // 앱이 백그라운드일 때는 폴링 중지
-    staleTime: 1000, // 데이터를 1초 동안 신선한 상태로 유지
+    refetchInterval: 3000,
+    refetchIntervalInBackground: false,
+    staleTime: 1000,
   });
+
   console.log(error);
 
   return (
@@ -118,28 +118,28 @@ const styles = StyleSheet.create({
   },
 });
 
-const exampleMessage: Message = {
-  type: "MESG",
-  message_id: 7701692635,
-  message: "안방에 있는 전등을 킬까요?",
-  created_at: 1731754566120,
-  user: {
-    user_id: "operator001",
-    profile_url: "",
-    require_auth_for_profile_image: false,
-    nickname: "전등",
-    role: "operator",
-    is_active: true,
-  },
-  channel_url: "living_room",
-  mentioned_users: [],
-  mention_type: "users",
-  silent: false,
-  is_op_msg: true,
-  message_events: {
-    send_push_notification: "receivers",
-    update_unread_count: true,
-    update_mention_count: true,
-    update_last_message: true,
-  },
-};
+// const exampleMessage: Message = {
+//   type: "MESG",
+//   message_id: 7701692635,
+//   message: "안방에 있는 전등을 킬까요?",
+//   created_at: 1731754566120,
+//   user: {
+//     user_id: "operator001",
+//     profile_url: "",
+//     require_auth_for_profile_image: false,
+//     nickname: "전등",
+//     role: "operator",
+//     is_active: true,
+//   },
+//   channel_url: "living_room",
+//   mentioned_users: [],
+//   mention_type: "users",
+//   silent: false,
+//   is_op_msg: true,
+//   message_events: {
+//     send_push_notification: "receivers",
+//     update_unread_count: true,
+//     update_mention_count: true,
+//     update_last_message: true,
+//   },
+// };

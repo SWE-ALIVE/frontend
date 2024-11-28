@@ -26,10 +26,10 @@ type ChatParams = {
 export default function ChatScreen() {
   const queryClient = useQueryClient();
   const userId = useUserStore((state) => state.user?.id);
-
   const { channel_url, channel_name } = useLocalSearchParams<ChatParams>();
   const { isVisible, toggle, close } = useModal();
   const router = useRouter();
+
   const {
     data: messages,
     isLoading: isMessageLoading,
@@ -45,22 +45,22 @@ export default function ChatScreen() {
       return response.messages;
     },
     enabled: !!userId && !!channel_url && !!channel_name,
-    refetchInterval: 1000, // 1초마다 자동으로 새 메시지 확인
+    refetchInterval: 1000,
     refetchIntervalInBackground: false,
   });
 
   const { data: userChatRooms, isLoading: isDeviceLoading } = useQuery({
     queryKey: ["channel", userId],
     queryFn: async () => {
+      console.log("requesting...");
       if (!userId) throw new Error("User ID is required");
       const response = await getChatRoom(userId);
       if (response && response.length > 0) {
       }
       return response;
     },
-    // enabled: !!userId,
     enabled: !!userId,
-    retry: 5,
+    retry: 3,
     retryDelay: 1000,
     refetchInterval: 3000,
     refetchIntervalInBackground: false,
@@ -72,6 +72,7 @@ export default function ChatScreen() {
   const deviceNicknames = currentChannelDevices.map(
     (device) => device.nickname
   );
+
   useEffect(() => {
     setMessage((prev) => ({
       ...prev,
@@ -87,7 +88,6 @@ export default function ChatScreen() {
   }));
 
   const appendMessage = async (newMessage: Message) => {
-    // 캐시된 메시지 목록에 새 메시지를 즉시 추가 (UI 즉시 업데이트)
     queryClient.setQueryData(
       ["messages", channel_url],
       (oldData: Message[] | undefined) => {
@@ -98,7 +98,6 @@ export default function ChatScreen() {
     refetch();
   };
 
-  // 컴포넌트 언마운트 시 정리 작업 추가
   useEffect(() => {
     return () => {
       queryClient.resetQueries({
@@ -213,56 +212,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-const dummyMessages: Message[] = [
-  {
-    type: "MESG",
-    message_id: 7701692633,
-    message: "안방이 좀 어둡네.",
-    created_at: 1731754565120,
-    user: {
-      user_id: "user123",
-      profile_url: "https://example.com/user123.png",
-      require_auth_for_profile_image: false,
-      nickname: "준성",
-      role: "operator",
-      is_active: true,
-    },
-    channel_url: "living_room",
-    mentioned_users: [],
-    mention_type: "users",
-    silent: false,
-    is_op_msg: false,
-    message_events: {
-      send_push_notification: "receivers",
-      update_unread_count: true,
-      update_mention_count: true,
-      update_last_message: true,
-    },
-  },
-  {
-    type: "MESG",
-    message_id: 7701692634,
-    message: "안방에 있는 전등을 킬까요?",
-    created_at: 1731754566120,
-    user: {
-      user_id: "operator001",
-      profile_url: "",
-      require_auth_for_profile_image: false,
-      nickname: "전등",
-      role: {},
-      is_active: true,
-    },
-    channel_url: "living_room",
-    mentioned_users: [],
-    mention_type: "users",
-    silent: false,
-    is_op_msg: true,
-    message_events: {
-      send_push_notification: "receivers",
-      update_unread_count: true,
-      update_mention_count: true,
-      update_last_message: true,
-    },
-  },
-];

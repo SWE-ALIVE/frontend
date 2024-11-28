@@ -22,8 +22,6 @@ export default function ListScreen() {
     },
     enabled: !!userId,
   });
-  console.log(userId);
-  console.log("user:" + userDevices);
   const deviceList =
     userDevices?.map((device) => ({
       category: device.category,

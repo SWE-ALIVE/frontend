@@ -52,7 +52,6 @@ export default function AppDetailScreen() {
       if (!userId || !appKey)
         throw new Error("User ID and App key are required");
       const res = await getDeviceUsage(userId, appKey);
-      console.log("requested" + res);
       return res;
     },
   });
