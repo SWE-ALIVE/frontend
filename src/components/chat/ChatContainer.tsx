@@ -61,7 +61,6 @@ const ChatContainer = ({
       </View>
     );
   }, []);
-  console.log(deviceNicknames);
 
   return (
     <ScrollView

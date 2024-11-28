@@ -1,4 +1,5 @@
 import { AppBar } from "@/components/common/AppBar";
+import { Loading } from "@/components/common/Loading";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
@@ -26,6 +27,7 @@ export default function CreateChatNameScreen() {
     return JSON.parse(params.selectedDevices);
   }, [params.selectedDevices]);
   const userId = useUserStore((state) => state.user?.id);
+  const [isLoading, setIsLoading] = useState(false);
 
   // const createChatMutation = useMutation({
   //   mutationFn: async () => {
@@ -70,6 +72,7 @@ export default function CreateChatNameScreen() {
       return createChatRoom(chatName, deviceIds, [userId]);
     },
     onSuccess: async (data) => {
+      setIsLoading(true);
       // 채팅방 생성 성공 후 메시지 전송
       try {
         if (!data.id || !data.channelDevices[0]?.id) {
@@ -82,9 +85,8 @@ export default function CreateChatNameScreen() {
           message: "채팅을 시작합니다.",
         };
 
-        console.log("Sending message with body:", messageBody); // 요청 데이터 로깅
         const response = await sendMessage(messageBody);
-        console.log("채팅방 생성 시 메세지 보내기 성공!", response);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log("초기 메시지 전송 실패 상세:", {
@@ -97,7 +99,7 @@ export default function CreateChatNameScreen() {
           console.log("초기 메시지 전송 실패:", error);
         }
       }
-
+      setIsLoading(false);
       router.push("/chat");
     },
     onError: (error) => {
@@ -143,6 +145,7 @@ export default function CreateChatNameScreen() {
 
   return (
     <ThemedView style={{ flex: 1 }}>
+      <Loading isLoading={isLoading} duration={2000} />
       <AppBar
         align="left"
         title="채팅방 개설"

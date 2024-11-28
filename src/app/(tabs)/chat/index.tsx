@@ -12,7 +12,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import { Message } from "@/types/chat";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, ScrollView, StyleSheet } from "react-native";
 export default function HomeScreen() {
   const userId = useUserStore((state) => state.user?.id);
 
@@ -88,12 +88,15 @@ export default function HomeScreen() {
           <ThemedText type="callout" style={{ marginBottom: 16 }}>
             채팅방 목록
           </ThemedText>
-          <FlatList
-            data={channels}
-            scrollEnabled={false}
-            renderItem={({ item }) => <ChatRoomCard {...item} />}
-            keyExtractor={(channel) => channel.channel_url}
-          />
+          <ScrollView>
+            <FlatList
+              data={channels}
+              scrollEnabled={false}
+              renderItem={({ item }) => <ChatRoomCard {...item} />}
+              keyExtractor={(channel) => channel.channel_url}
+              style={{ marginBottom: 500 }}
+            />
+          </ScrollView>
         </ThemedView>
       </ThemedView>
     </ThemedView>

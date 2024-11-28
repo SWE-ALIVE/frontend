@@ -28,7 +28,6 @@ export default function ChatScreen() {
   const userId = useUserStore((state) => state.user?.id);
 
   const { channel_url, channel_name } = useLocalSearchParams<ChatParams>();
-  console.log("This Channel : channel url" + channel_url);
   const { isVisible, toggle, close } = useModal();
   const router = useRouter();
   const {
@@ -53,19 +52,15 @@ export default function ChatScreen() {
   const { data: userChatRooms, isLoading: isDeviceLoading } = useQuery({
     queryKey: ["channel", userId],
     queryFn: async () => {
-      console.log("쿼리 시작", { userId }); // enabled 조건 확인
-
       if (!userId) throw new Error("User ID is required");
       const response = await getChatRoom(userId);
-      console.log("asdfasdfasdf" + response);
       if (response && response.length > 0) {
       }
-      console.log(userChatRooms);
       return response;
     },
     // enabled: !!userId,
-    enabled: !!userId, // 데이터가 로드되면 더 이상 요청하지 않음
-    retry: 5, // Maximum 3 retry attempts
+    enabled: !!userId,
+    retry: 5,
     retryDelay: 1000,
     refetchInterval: 3000,
     refetchIntervalInBackground: false,
@@ -77,7 +72,6 @@ export default function ChatScreen() {
   const deviceNicknames = currentChannelDevices.map(
     (device) => device.nickname
   );
-  console.log("새롭게 생성.." + currentChannelDevices);
   useEffect(() => {
     setMessage((prev) => ({
       ...prev,
@@ -86,23 +80,12 @@ export default function ChatScreen() {
     }));
   }, [channel_url]);
 
-  // const [message, setMessage] = useState<MessageBody>({
-  //   message: "",
-  //   channel_url: channel_url,
-  //   user_id: userId ?? "", // 기본값으로 빈 문자열 사용
-  // });
   const [message, setMessage] = useState<MessageBody>(() => ({
     message: "",
     channel_url: channel_url,
     user_id: userId ?? "",
   }));
 
-  // const appendMessage = async (newMessage: Message) => {
-  //   if (messages) {
-  //     messages.push(newMessage);
-  //     refetch();
-  //   }
-  // };
   const appendMessage = async (newMessage: Message) => {
     // 캐시된 메시지 목록에 새 메시지를 즉시 추가 (UI 즉시 업데이트)
     queryClient.setQueryData(
@@ -112,8 +95,6 @@ export default function ChatScreen() {
         return [...oldData, newMessage];
       }
     );
-
-    // 서버와 동기화하여 실제 데이터 확인
     refetch();
   };
 
@@ -126,12 +107,6 @@ export default function ChatScreen() {
       toggle();
     };
   }, []);
-
-  // useEffect(() => {
-  //   return () => {
-  //     toggle();
-  //   };
-  // }, []);
 
   return (
     <KeyboardAvoidingView
@@ -177,25 +152,12 @@ export default function ChatScreen() {
           userChatRooms &&
           !isDeviceLoading &&
           currentChannelDevices.length > 0 ? (
-            <>
-              {/* <ThemedView style={styles.inviteContainer}>
-                {deviceNicknames.map((nickname, index) => (
-                  <ThemedText key={index} type="body" color={Colors.light.tint}>
-                    {nickname}
-                    {index !== deviceNicknames.length - 1 ? ", " : ""}
-                  </ThemedText>
-                ))}
-                <ThemedText type="body" color={Colors.light.tint}>
-                  를 초대했습니다.
-                </ThemedText>
-              </ThemedView> */}
-              <ThemedView style={{ flex: 1, paddingBottom: 0 }}>
-                <ChatContainer
-                  messages={messages}
-                  deviceNicknames={deviceNicknames}
-                />
-              </ThemedView>
-            </>
+            <ThemedView style={{ flex: 1, paddingBottom: 0 }}>
+              <ChatContainer
+                messages={messages}
+                deviceNicknames={deviceNicknames}
+              />
+            </ThemedView>
           ) : (
             <View style={{ flex: 1 }} />
           )}

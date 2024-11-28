@@ -52,17 +52,17 @@ export default function AppDetailScreen() {
       if (!userId || !appKey)
         throw new Error("User ID and App key are required");
       const res = await getDeviceUsage(userId, appKey);
+      console.log("requested" + res);
       return res;
     },
   });
   if (deviceError) {
     console.log("device Error" + deviceError.message);
   }
-
   const IconComponent = DeviceIconMap[category];
   const formatDateTime = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toISOString().slice(0, 19); // Format: YYYY-MM-DDTHH:mm:ss
+    return date.toISOString().slice(0, 19);
   };
   const calculateDuration = (startTime: string, endTime: string) => {
     const start = new Date(startTime);

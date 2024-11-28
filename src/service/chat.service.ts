@@ -29,3 +29,7 @@ export const createChatRoom = async (
   });
   return response.data;
 };
+
+export const deleteChatRoom = async (params: { channel_id?: string }) => {
+  await instance.delete("v1/channels", { params });
+};
