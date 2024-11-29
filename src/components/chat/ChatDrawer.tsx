@@ -4,6 +4,7 @@ import { UserChatRooms } from "@/service/channel.service";
 import { deleteChatRoom } from "@/service/chat.service";
 import { DeviceCategory, DeviceIconMap } from "@/types/device";
 import Feather from "@expo/vector-icons/Feather";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -33,6 +34,7 @@ export function ChatModal({
   userChatRooms,
   channelUrl,
 }: ChatModalProps) {
+  const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -41,11 +43,13 @@ export function ChatModal({
     try {
       setIsLoading(true);
       await deleteChatRoom({ channel_id: channelUrl });
-      console.log("채널 삭제 완료");
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsLoading(false);
+      queryClient.refetchQueries({
+        queryKey: ["channels"],
+      });
       onClose();
-      router.back();
+      router.push("/(tabs)/chat");
     } catch (error) {
       console.error("채널 삭제 실패:", error);
     }

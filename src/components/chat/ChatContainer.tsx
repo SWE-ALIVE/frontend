@@ -72,7 +72,11 @@ const ChatContainer = ({
           를 초대했습니다.
         </ThemedText>
       </ThemedView>
-    ) : null;
+    ) : (
+      <ThemedView>
+        <ThemedText>sdfsdf</ThemedText>
+      </ThemedView>
+    );
   }, [deviceNicknames]);
 
   if (!deviceNicknames) {
@@ -141,4 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(ChatContainer);
+export default ChatContainer;

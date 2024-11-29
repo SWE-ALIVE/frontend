@@ -21,7 +21,7 @@ interface MessageBody {
 export default function CreateChatNameScreen() {
   const params = useLocalSearchParams<{ selectedDevices: string }>();
   const router = useRouter();
-  const queryclient = useQueryClient();
+  const queryClient = useQueryClient();
   const [chatName, setChatName] = useState("");
   const selectedDevices: UserDevice[] = useMemo(() => {
     if (!params.selectedDevices) return [];
@@ -53,7 +53,7 @@ export default function CreateChatNameScreen() {
         };
 
         await sendMessage(messageBody);
-        queryclient.invalidateQueries({
+        queryClient.refetchQueries({
           queryKey: ["channels"],
         });
       } catch (error) {

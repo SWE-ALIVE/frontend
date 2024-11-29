@@ -14,8 +14,8 @@ import { useUserStore } from "@/stores/useUserStore";
 import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 
 type ChatParams = {
@@ -44,10 +44,13 @@ export default function ChatScreen() {
       });
       return response.messages;
     },
-    enabled: !!userId && !!channel_url && !!channel_name,
   });
 
-  const { data: userChatRooms, isLoading: isDeviceLoading } = useQuery({
+  const {
+    data: userChatRooms,
+    isLoading: isDeviceLoading,
+    refetch: refetchChatRooms,
+  } = useQuery({
     queryKey: ["channel", userId],
     queryFn: async () => {
       if (!userId) throw new Error("User ID is required");
@@ -56,8 +59,13 @@ export default function ChatScreen() {
       }
       return response;
     },
-    enabled: !!userId,
   });
+  useFocusEffect(
+    useCallback(() => {
+      refetchChatRooms();
+      refetch();
+    }, [refetchChatRooms, refetch])
+  );
 
   const currentChannelDevices =
     userChatRooms?.find((channel) => channel.channel_id === channel_url)
@@ -140,6 +148,7 @@ export default function ChatScreen() {
         />
         <ThemedView style={{ paddingHorizontal: 16, flex: 1 }}>
           {messages &&
+          messages.length > 0 &&
           !isMessageLoading &&
           userChatRooms &&
           !isDeviceLoading &&

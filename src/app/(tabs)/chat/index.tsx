@@ -26,8 +26,6 @@ export default function HomeScreen() {
     enabled: !!userId,
   });
 
-  console.log(error);
-
   return (
     <ThemedView style={styles.container}>
       <AppBar
@@ -114,29 +112,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-// const exampleMessage: Message = {
-//   type: "MESG",
-//   message_id: 7701692635,
-//   message: "안방에 있는 전등을 킬까요?",
-//   created_at: 1731754566120,
-//   user: {
-//     user_id: "operator001",
-//     profile_url: "",
-//     require_auth_for_profile_image: false,
-//     nickname: "전등",
-//     role: "operator",
-//     is_active: true,
-//   },
-//   channel_url: "living_room",
-//   mentioned_users: [],
-//   mention_type: "users",
-//   silent: false,
-//   is_op_msg: true,
-//   message_events: {
-//     send_push_notification: "receivers",
-//     update_unread_count: true,
-//     update_mention_count: true,
-//     update_last_message: true,
-//   },
-// };
