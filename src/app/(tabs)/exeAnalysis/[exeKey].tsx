@@ -1,4 +1,4 @@
-import { ContentBox } from "@/components/analysis/ContentBox";
+import { ContentBox } from "@/components/analysis/contentBox";
 import { EnergyCard } from "@/components/analysis/energyCard";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";

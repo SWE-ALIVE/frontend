@@ -24,9 +24,6 @@ export default function HomeScreen() {
       return response.channels;
     },
     enabled: !!userId,
-    refetchInterval: 3000,
-    refetchIntervalInBackground: false,
-    staleTime: 1000,
   });
 
   console.log(error);

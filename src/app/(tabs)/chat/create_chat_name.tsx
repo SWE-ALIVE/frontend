@@ -8,7 +8,7 @@ import { UserDevice } from "@/service/device.service";
 import { sendMessage } from "@/service/message.service";
 import { useUserStore } from "@/stores/useUserStore";
 import Feather from "@expo/vector-icons/Feather";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
@@ -21,6 +21,7 @@ interface MessageBody {
 export default function CreateChatNameScreen() {
   const params = useLocalSearchParams<{ selectedDevices: string }>();
   const router = useRouter();
+  const queryclient = useQueryClient();
   const [chatName, setChatName] = useState("");
   const selectedDevices: UserDevice[] = useMemo(() => {
     if (!params.selectedDevices) return [];
@@ -51,8 +52,10 @@ export default function CreateChatNameScreen() {
           message: "채팅을 시작합니다.",
         };
 
-        const response = await sendMessage(messageBody);
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await sendMessage(messageBody);
+        queryclient.invalidateQueries({
+          queryKey: ["channels"],
+        });
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log("초기 메시지 전송 실패 상세:", {

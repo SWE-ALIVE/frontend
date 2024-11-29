@@ -104,13 +104,13 @@ const DeviceCard = ({
       <ThemedView style={{ flexDirection: "column" }}>
         <ThemedText
           type="subhead"
-          color={isActive ? Colors.light.lowGray : Colors.light.lightGray}
+          color={isActive ? Colors.light.black : Colors.light.lightGray}
         >
           {nickname}
         </ThemedText>
         <ThemedText
           type="body"
-          color={isActive ? Colors.light.lowGray : Colors.light.lightGray}
+          color={isActive ? Colors.light.black : Colors.light.lightGray}
         >
           {name}
         </ThemedText>
