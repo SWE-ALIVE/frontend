@@ -3,13 +3,14 @@ import { ThemedView } from "@/components/common/ThemedView";
 import { ExeLogBox } from "@/components/list/ExeLogBox";
 import { ParticipatingChatRoom } from "@/components/list/ParticipatingChatRoom";
 import { Colors } from "@/constants/colors.constant";
-import { getChannels } from "@/service/channel.service";
+import { getChannels, getChatRoom } from "@/service/channel.service";
 import { getDeviceUsage } from "@/service/device.service";
 import { useUserStore } from "@/stores/useUserStore";
 import { DeviceIconMap } from "@/types/device";
 import Feather from "@expo/vector-icons/Feather";
-import { useQuery } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -18,6 +19,8 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function AppDetailScreen() {
+  const queryClient = useQueryClient();
+
   const { appKey, category, translatedCategory, name } = useLocalSearchParams<{
     appKey: string;
     category: keyof typeof DeviceIconMap;
@@ -37,10 +40,25 @@ export default function AppDetailScreen() {
       return response.channels;
     },
     enabled: !!appKey,
+    staleTime: 0,
   });
   if (channelError) {
     console.log("channel Error" + channelError.message);
   }
+
+  const {
+    data: userChatRooms = [],
+    error: chatRoomError,
+    isLoading: chatRoomLoading,
+  } = useQuery({
+    queryKey: ["chatRooms", userId],
+    queryFn: async () => {
+      if (!userId) throw new Error("user Id is required");
+      return await getChatRoom(userId);
+    },
+    enabled: !!userId,
+    staleTime: 0,
+  });
 
   const {
     data: deviceUsage,
@@ -59,6 +77,37 @@ export default function AppDetailScreen() {
     console.log("device Error" + deviceError.message);
   }
   const IconComponent = DeviceIconMap[category];
+
+  const deviceChatRooms = userChatRooms.filter((room) =>
+    room.devices.some((device) => device.id === appKey)
+  );
+
+  const renderChatRooms = () => {
+    if (!deviceChatRooms.length) {
+      return <ThemedText>참여 중인 채팅방이 없습니다.</ThemedText>;
+    }
+
+    return deviceChatRooms.map((room) => {
+      const channelInfo = channels.find(
+        (channel) => channel.channel_url === room.channel_id
+      );
+
+      return channelInfo ? (
+        <ParticipatingChatRoom key={room.channel_id} {...channelInfo} />
+      ) : null;
+    });
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      queryClient.invalidateQueries({
+        queryKey: ["chatRooms", userId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["channels", appKey],
+      });
+    }, [userId, appKey])
+  );
   const formatDateTime = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toISOString().slice(0, 19);
@@ -183,7 +232,8 @@ export default function AppDetailScreen() {
           </ThemedView>
         </ThemedView>
         <ThemedView style={styles.sectionContent}>
-          {!deviceUsage?.channels?.length ? (
+          {renderChatRooms()}
+          {/* {!deviceUsage?.channels?.length ? (
             <ThemedText>참여 중인 채팅방이 없습니다.</ThemedText>
           ) : (
             deviceUsage.channels.map((room) => {
@@ -198,7 +248,7 @@ export default function AppDetailScreen() {
                 />
               ) : null;
             })
-          )}
+          )} */}
         </ThemedView>
       </ThemedView>
 

@@ -2,6 +2,7 @@ import { Colors } from "@/constants/colors.constant";
 import { sendMessage } from "@/service/message.service";
 import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,
@@ -24,12 +25,16 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const backgroundColorAnim = useRef(new Animated.Value(0)).current;
   const borderWidthAnim = useRef(new Animated.Value(0)).current;
+  const queryClient = useQueryClient();
 
   const sendChat = async () => {
     try {
       setMessage((prev) => ({ ...prev, message: "" }));
       const res = await sendMessage(message);
       appendMessage(res);
+      queryClient.refetchQueries({
+        queryKey: ["channels"],
+      });
     } catch (error) {
       console.log(error);
     }

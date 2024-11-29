@@ -45,14 +45,12 @@ export default function ChatScreen() {
       return response.messages;
     },
     enabled: !!userId && !!channel_url && !!channel_name,
-    refetchInterval: 1000,
-    refetchIntervalInBackground: false,
   });
 
   const { data: userChatRooms, isLoading: isDeviceLoading } = useQuery({
     queryKey: ["channel", userId],
     queryFn: async () => {
-      console.log("requesting...");
+      // console.log("requesting...");
       if (!userId) throw new Error("User ID is required");
       const response = await getChatRoom(userId);
       if (response && response.length > 0) {
@@ -60,10 +58,10 @@ export default function ChatScreen() {
       return response;
     },
     enabled: !!userId,
-    retry: 3,
-    retryDelay: 1000,
-    refetchInterval: 3000,
-    refetchIntervalInBackground: false,
+    // retry: 3,
+    // retryDelay: 1000,
+    // refetchInterval: 3000,
+    // refetchIntervalInBackground: false,
   });
 
   const currentChannelDevices =
