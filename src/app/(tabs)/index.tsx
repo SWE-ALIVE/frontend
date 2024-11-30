@@ -7,7 +7,6 @@ import BellIcon from "@/components/icons/Bell";
 import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import PlusIcon from "@/components/icons/Plus";
 import { Colors } from "@/constants/colors.constant";
-import { Channel } from "@/service/channel.service";
 import { useDeviceStore } from "@/stores/useDeviceStore";
 import { Message } from "@/types/chat";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -38,7 +37,7 @@ export default function ReadyToConnectScreen() {
   return (
     <ThemedView style={styles.container}>
       <AppBar
-        title="LG MACS"
+        title="LG ALIVE"
         align="left"
         rightIcons={[
           {
@@ -140,36 +139,3 @@ const exampleMessage: Message = {
     update_last_message: true,
   },
 };
-
-const dummyChannels: Channel[] = [
-  {
-    channel_url: "total",
-    name: "전체 채팅방",
-    cover_url:
-      "https://res.cloudinary.com/dvhm5zqi5/image/upload/v1731955612/rounded-lg_dmw0sr.png",
-    member_count: 12,
-    joined_member_count: 12,
-    unread_message_count: 1,
-    last_message: exampleMessage,
-  },
-  {
-    channel_url: "living_room",
-    name: "거실",
-    cover_url:
-      "https://res.cloudinary.com/dvhm5zqi5/image/upload/v1731955612/rounded-lg_dmw0sr.png",
-    member_count: 3,
-    joined_member_count: 3,
-    unread_message_count: 0,
-    last_message: exampleMessage,
-  },
-  {
-    channel_url: "toilet",
-    name: "화장실",
-    cover_url:
-      "https://res.cloudinary.com/dvhm5zqi5/image/upload/v1731955612/rounded-lg_dmw0sr.png",
-    member_count: 4,
-    joined_member_count: 4,
-    unread_message_count: 1,
-    last_message: exampleMessage,
-  },
-];

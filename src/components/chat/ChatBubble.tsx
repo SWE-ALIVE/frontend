@@ -6,7 +6,8 @@ import { ThemedText } from "../common/ThemedText";
 import { ThemedView } from "../common/ThemedView";
 
 export const ChatBubble = ({ message, created_at, user }: Message) => {
-  const formattedDate = dayjs(created_at).format("HH:mm A");
+  // const formattedDate = dayjs(created_at).format("HH:mm A");
+  const formattedDate = dayjs(created_at).locale("en").format("hh:mm A");
   const isUser = user.role === "operator";
   const backgroundColor = isUser ? Colors.light.tint : Colors.light.background;
   const textColor = isUser ? Colors.light.background : Colors.light.text;

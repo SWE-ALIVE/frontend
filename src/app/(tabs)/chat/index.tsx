@@ -8,23 +8,28 @@ import MoreVerticalIcon from "@/components/icons/MoreVertical";
 import PlusIcon from "@/components/icons/Plus";
 import { Colors } from "@/constants/colors.constant";
 import { getChannels } from "@/service/channel.service";
-import { Message } from "@/types/chat";
+import { useUserStore } from "@/stores/useUserStore";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, ScrollView, StyleSheet } from "react-native";
 export default function HomeScreen() {
+  const userId = useUserStore((state) => state.user?.id);
   const router = useRouter();
+
   const { data: channels, error } = useQuery({
-    queryKey: ["channels"],
+    queryKey: ["channels", userId],
     queryFn: async () => {
-      const response = await getChannels("zxvm5962");
+      if (!userId) throw new Error("User ID is required");
+      const response = await getChannels(userId);
       return response.channels;
     },
+    enabled: !!userId,
   });
+
   return (
     <ThemedView style={styles.container}>
       <AppBar
-        title="LG MACS"
+        title="LG ALIVE"
         align="left"
         rightIcons={[
           {
@@ -78,12 +83,15 @@ export default function HomeScreen() {
           <ThemedText type="callout" style={{ marginBottom: 16 }}>
             채팅방 목록
           </ThemedText>
-          <FlatList
-            data={channels}
-            scrollEnabled={false}
-            renderItem={({ item }) => <ChatRoomCard {...item} />}
-            keyExtractor={(channel) => channel.channel_url}
-          />
+          <ScrollView>
+            <FlatList
+              data={channels}
+              scrollEnabled={false}
+              renderItem={({ item }) => <ChatRoomCard {...item} />}
+              keyExtractor={(channel) => channel.channel_url}
+              style={{ marginBottom: 500 }}
+            />
+          </ScrollView>
         </ThemedView>
       </ThemedView>
     </ThemedView>
@@ -104,29 +112,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-const exampleMessage: Message = {
-  type: "MESG",
-  message_id: 7701692635,
-  message: "안방에 있는 전등을 킬까요?",
-  created_at: 1731754566120,
-  user: {
-    user_id: "operator001",
-    profile_url: "",
-    require_auth_for_profile_image: false,
-    nickname: "전등",
-    role: "operator",
-    is_active: true,
-  },
-  channel_url: "living_room",
-  mentioned_users: [],
-  mention_type: "users",
-  silent: false,
-  is_op_msg: true,
-  message_events: {
-    send_push_notification: "receivers",
-    update_unread_count: true,
-    update_mention_count: true,
-    update_last_message: true,
-  },
-};

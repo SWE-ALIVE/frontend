@@ -30,14 +30,18 @@ export const ChatRoomCard = (channel: Channel) => {
           />
           <ThemedView>
             <ThemedText type="callout">{name}</ThemedText>
-            <ThemedText type="footnote">{last_message.message}</ThemedText>
+            <ThemedText type="footnote">
+              {last_message?.message || "새로운 채팅방입니다"}
+            </ThemedText>
           </ThemedView>
         </ThemedView>
         <ThemedView
           style={{ flexDirection: "column", alignItems: "flex-end", gap: 4 }}
         >
           <ThemedText type="footnote" color={Colors.light.lowGray}>
-            {dayjs(last_message.created_at).format("HH:mm")}
+            {last_message?.created_at
+              ? dayjs(last_message.created_at).format("HH:mm")
+              : ""}
           </ThemedText>
           {unread_message_count > 0 && (
             <ThemedView

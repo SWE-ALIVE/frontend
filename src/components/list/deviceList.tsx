@@ -16,9 +16,10 @@ export interface DeviceListProp {
   name: string;
   id: string;
   disabled?: boolean;
+  nickname: string;
 }
 
-const DeviceList = ({ category, name, id }: DeviceListProp) => {
+const DeviceList = ({ category, name, id, nickname }: DeviceListProp) => {
   const appKey = id;
   const router = useRouter();
   const translatedCategory = TranslateDeviceName[category];
@@ -76,7 +77,7 @@ const DeviceList = ({ category, name, id }: DeviceListProp) => {
         </Animated.View>
         <ThemedView style={{ flexDirection: "column" }}>
           <ThemedText type="subhead" color={Colors.light.black}>
-            {TranslateDeviceName[category]}
+            {nickname}
           </ThemedText>
           <ThemedText type="body" color={Colors.light.lowGray}>
             {name}

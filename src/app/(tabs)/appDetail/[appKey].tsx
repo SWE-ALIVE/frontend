@@ -3,13 +3,14 @@ import { ThemedView } from "@/components/common/ThemedView";
 import { ExeLogBox } from "@/components/list/ExeLogBox";
 import { ParticipatingChatRoom } from "@/components/list/ParticipatingChatRoom";
 import { Colors } from "@/constants/colors.constant";
-import { getChannels } from "@/service/channel.service";
+import { getChannels, getChatRoom } from "@/service/channel.service";
 import { getDeviceUsage } from "@/service/device.service";
 import { useUserStore } from "@/stores/useUserStore";
 import { DeviceIconMap } from "@/types/device";
 import Feather from "@expo/vector-icons/Feather";
-import { useQuery } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -18,6 +19,8 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function AppDetailScreen() {
+  const queryClient = useQueryClient();
+
   const { appKey, category, translatedCategory, name } = useLocalSearchParams<{
     appKey: string;
     category: keyof typeof DeviceIconMap;
@@ -25,19 +28,43 @@ export default function AppDetailScreen() {
     name: string;
   }>();
   const userId = useUserStore((state) => state.user?.id);
-  const { data: channels = [], error: channelError } = useQuery({
+  const {
+    data: channels = [],
+    error: channelError,
+    isLoading: channelLoading,
+  } = useQuery({
     queryKey: ["channels", appKey],
     queryFn: async () => {
-      const response = await getChannels("zxvm5962");
+      if (!userId) throw new Error("user Id is required");
+      const response = await getChannels(userId);
       return response.channels;
     },
     enabled: !!appKey,
+    staleTime: 0,
   });
   if (channelError) {
     console.log("channel Error" + channelError.message);
   }
 
-  const { data: deviceUsage, error: deviceError } = useQuery({
+  const {
+    data: userChatRooms = [],
+    error: chatRoomError,
+    isLoading: chatRoomLoading,
+  } = useQuery({
+    queryKey: ["chatRooms", userId],
+    queryFn: async () => {
+      if (!userId) throw new Error("user Id is required");
+      return await getChatRoom(userId);
+    },
+    enabled: !!userId,
+    staleTime: 0,
+  });
+
+  const {
+    data: deviceUsage,
+    error: deviceError,
+    isLoading: deviceLoading,
+  } = useQuery({
     queryKey: ["deviceUsage", appKey, userId],
     queryFn: async () => {
       if (!userId || !appKey)
@@ -49,26 +76,62 @@ export default function AppDetailScreen() {
   if (deviceError) {
     console.log("device Error" + deviceError.message);
   }
-
   const IconComponent = DeviceIconMap[category];
 
+  const deviceChatRooms = userChatRooms.filter((room) =>
+    room.devices.some((device) => device.id === appKey)
+  );
+
+  const renderChatRooms = () => {
+    if (!deviceChatRooms.length) {
+      return <ThemedText>참여 중인 채팅방이 없습니다.</ThemedText>;
+    }
+
+    return deviceChatRooms.map((room) => {
+      const channelInfo = channels.find(
+        (channel) => channel.channel_url === room.channel_id
+      );
+
+      return channelInfo ? (
+        <ParticipatingChatRoom key={room.channel_id} {...channelInfo} />
+      ) : null;
+    });
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      queryClient.invalidateQueries({
+        queryKey: ["chatRooms", userId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["channels", appKey],
+      });
+    }, [userId, appKey])
+  );
+  const formatDateTime = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toISOString().slice(0, 19);
+  };
+  const calculateDuration = (startTime: string, endTime: string) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    return Math.round((end.getTime() - start.getTime()) / (1000 * 60));
+  };
   const renderActions = () => {
     if (!deviceUsage?.actions?.length) {
       return <ThemedText>실행 내역이 없습니다.</ThemedText>;
     }
 
     return deviceUsage.actions.map((action, index) => {
-      const startDateTime = `${action.usageDate}T${action.startTime}:00`;
-      const endDateTime = `${action.usageDate}T${action.endTime}:00`;
-      const duration =
-        (new Date(endDateTime).getTime() - new Date(startDateTime).getTime()) /
-        (1000 * 60);
+      const startDateTime = formatDateTime(action.start_time);
+      const endDateTime = formatDateTime(action.end_time);
+      const duration = calculateDuration(action.start_time, action.end_time);
 
       return (
         <ThemedView key={index} style={{ marginVertical: 4 }}>
           <ExeLogBox
-            usageDate={action.usageDate}
-            mode={action.actionDescription}
+            usageDate={new Date(startDateTime).toISOString().split("T")[0]}
+            mode={action.action_description}
             startTime={startDateTime}
             endTime={endDateTime}
             duration={duration}
@@ -169,23 +232,23 @@ export default function AppDetailScreen() {
           </ThemedView>
         </ThemedView>
         <ThemedView style={styles.sectionContent}>
-          {!deviceUsage?.channels?.length ? (
+          {renderChatRooms()}
+          {/* {!deviceUsage?.channels?.length ? (
             <ThemedText>참여 중인 채팅방이 없습니다.</ThemedText>
           ) : (
             deviceUsage.channels.map((room) => {
               const channelInfo = channels.find(
-                (channel) => channel.name === room.channelName
-                // name <=> url
+                (channel) => channel.channel_url === room.channel_id
               );
 
               return channelInfo ? (
                 <ParticipatingChatRoom
-                  key={room.channelName}
+                  key={room.channel_name}
                   {...channelInfo}
                 />
               ) : null;
             })
-          )}
+          )} */}
         </ThemedView>
       </ThemedView>
 

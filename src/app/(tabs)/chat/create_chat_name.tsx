@@ -1,17 +1,93 @@
 import { AppBar } from "@/components/common/AppBar";
+import { Loading } from "@/components/common/Loading";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
+import { createChatRoom } from "@/service/chat.service";
+import { UserDevice } from "@/service/device.service";
+import { sendMessage } from "@/service/message.service";
+import { useUserStore } from "@/stores/useUserStore";
 import Feather from "@expo/vector-icons/Feather";
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { StyleSheet, TextInput, TextInputProps } from "react-native";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
+import { Alert, StyleSheet, TextInput, TextInputProps } from "react-native";
+interface MessageBody {
+  channel_url: string;
+  user_id: string;
+  message: string;
+}
 export default function CreateChatNameScreen() {
+  const params = useLocalSearchParams<{ selectedDevices: string }>();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [chatName, setChatName] = useState("");
+  const selectedDevices: UserDevice[] = useMemo(() => {
+    if (!params.selectedDevices) return [];
+    return JSON.parse(params.selectedDevices);
+  }, [params.selectedDevices]);
+  const userId = useUserStore((state) => state.user?.id);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const createChatMutation = useMutation({
+    mutationFn: async () => {
+      if (!userId) throw new Error("User ID is required");
+      const deviceIds = [
+        ...selectedDevices.map((device) => device.device_id),
+        userId,
+      ];
+      return createChatRoom(chatName, deviceIds, [userId]);
+    },
+    onSuccess: async (data) => {
+      setIsLoading(true);
+      try {
+        if (!data.id || !data.channelDevices[0]?.id) {
+          throw new Error("Required data is missing");
+        }
+
+        const messageBody: MessageBody = {
+          channel_url: data.id,
+          user_id: userId ? userId : "",
+          message: "채팅을 시작합니다.",
+        };
+
+        await sendMessage(messageBody);
+        queryClient.refetchQueries({
+          queryKey: ["channels"],
+        });
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log("초기 메시지 전송 실패 상세:", {
+            status: error.response?.status,
+            data: error.response?.data,
+            message: error.message,
+            body: error.config?.data,
+          });
+        } else {
+          console.log("초기 메시지 전송 실패:", error);
+        }
+      }
+      setIsLoading(false);
+      router.push("/chat");
+    },
+    onError: (error) => {
+      Alert.alert(
+        "오류",
+        "채팅방 생성 중 오류가 발생했습니다. 다시 시도해주세요."
+      );
+    },
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      setChatName("");
+    }, [])
+  );
+
   return (
     <ThemedView style={{ flex: 1 }}>
+      <Loading isLoading={isLoading} duration={2000} />
       <AppBar
         align="left"
         title="채팅방 개설"
@@ -33,8 +109,10 @@ export default function CreateChatNameScreen() {
                 확인
               </ThemedText>
             ),
-            onPress: () => router.push("/chat"),
-            disabled: chatName.length === 0,
+            onPress: () => {
+              if (chatName.length === 0) return;
+              createChatMutation.mutate();
+            },
           },
         ]}
       />
@@ -136,7 +214,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   lengthText: {
-    position: "absolute", // 절대 위치
+    position: "absolute",
     right: 16,
     top: 198,
     color: Colors.light.textDisabled,
