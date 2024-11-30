@@ -1,9 +1,9 @@
-import { ScrollView, StyleSheet } from "react-native";
-import { ThemedView } from "@/components/common/ThemedView";
-import { ThemedText } from "@/components/common/ThemedText";
 import { ClickBox } from "@/components/common/ClickBox";
+import { ThemedText } from "@/components/common/ThemedText";
+import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
 import { Record } from "@/types/record.types";
+import { ScrollView, StyleSheet } from "react-native";
 
 interface RecordListProps {
   records: Record[];

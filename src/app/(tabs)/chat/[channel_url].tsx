@@ -44,6 +44,8 @@ export default function ChatScreen() {
       });
       return response.messages;
     },
+    refetchInterval: 1000,
+    refetchIntervalInBackground: false,
   });
 
   const {

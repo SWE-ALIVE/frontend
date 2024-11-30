@@ -44,6 +44,7 @@ const ChatContainer = ({
 
     return (
       <View
+        key={item.message_id}
         style={[
           styles.chatBubbleContainer,
           isUser ? styles.userBubble : styles.otherBubble,
@@ -86,12 +87,10 @@ const ChatContainer = ({
   return (
     <FlatList
       ref={flatListRef}
-      data={messages}
+      data={messages.slice(1)}
       renderItem={renderItem}
       ListHeaderComponent={ListHeaderComponent}
-      keyExtractor={(message) =>
-        message.channel_url.toString() + message.message_id.toString()
-      }
+      keyExtractor={(message) => message.message_id.toString()}
       contentContainerStyle={styles.contentContainer}
       style={styles.mainContainer}
       onContentSizeChange={() => scrollToBottom(50)}
