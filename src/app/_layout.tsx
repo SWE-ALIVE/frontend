@@ -27,14 +27,24 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    let splashTimeout: NodeJS.Timeout;
+
     if (loaded) {
-      SplashScreen.hideAsync();
+      // 최소 1초 스플래시 화면을 유지
+      splashTimeout = setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, 1000);
     }
+
+    return () => {
+      if (splashTimeout) clearTimeout(splashTimeout);
+    };
   }, [loaded]);
 
   if (!loaded) {
     return null;
   }
+
   const queryClient = new QueryClient();
 
   return (

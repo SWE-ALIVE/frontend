@@ -8,8 +8,8 @@ export interface LoginRequest {
 export interface LoginResponse {
   id: string;
   name: string;
-  birthDate: string;
-  phoneNumber: string;
+  birth_date: string;
+  phone_number: string;
 }
 
 export const login = async (

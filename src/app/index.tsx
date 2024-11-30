@@ -50,8 +50,8 @@ export default function HomeScreen() {
       });
       setUser({
         name: userData.name,
-        phone_number: userData.phoneNumber,
-        birth_date: userData.birthDate,
+        phone_number: userData.phone_number,
+        birth_date: userData.birth_date,
         id: userData.id,
       });
       setIsLoading(false);

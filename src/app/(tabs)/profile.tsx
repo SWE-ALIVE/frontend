@@ -1,32 +1,50 @@
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 
+import Person3D from "@/assets/images/person-3d.png";
 import { Button } from "@/components/common/Button";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
 import { useUserStore } from "@/stores/useUserStore";
+import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
-
 export default function ProfileScreen() {
   const { clearUser, user } = useUserStore();
   const router = useRouter();
 
   const logout = () => {
     clearUser();
+    router.reload();
     router.push("/");
   };
+
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={{ paddingHorizontal: 32 }}>
-        <ThemedText type="title1" style={{ marginBottom: 8, height: 80 }}>
-          프로필
-        </ThemedText>
-        <ThemedText type="title3" style={{ marginBottom: 16 }}>
-          {user?.name}
-        </ThemedText>
-        <ThemedText type="title3" style={{ marginBottom: 16 }}>
-          {user?.phone_number}
-        </ThemedText>
+      <ThemedView
+        style={{
+          paddingHorizontal: 32,
+          marginVertical: 32,
+          paddingVertical: 12,
+          alignItems: "center",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <ThemedView
+          style={{ flexDirection: "row", gap: 16, alignItems: "center" }}
+        >
+          <Image source={Person3D} style={{ width: 92, height: 92 }} />
+          <ThemedView>
+            <ThemedText type="headline">{user?.name}</ThemedText>
+            <ThemedText
+              type="headline"
+              style={{ fontFamily: "LGEIText-Regular" }}
+            >
+              {user?.phone_number}
+            </ThemedText>
+          </ThemedView>
+        </ThemedView>
+        <Feather name="chevron-right" size={20} />
       </ThemedView>
       <ThemedView
         style={{ backgroundColor: Colors.light.buttonDisabled, flex: 1 }}
@@ -39,37 +57,62 @@ export default function ProfileScreen() {
         >
           <ThemedView
             style={{
-              height: 32,
-              flex: 1,
               backgroundColor: "white",
-              paddingVertical: 40,
+              paddingVertical: 20,
+              paddingHorizontal: 24,
               borderRadius: 12,
               marginBottom: 12,
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "row",
             }}
-          ></ThemedView>
+          >
+            <ThemedText type="body" color="black">
+              알림 설정
+            </ThemedText>
+            <Feather name="chevron-right" size={16} />
+          </ThemedView>
           <ThemedView
             style={{
-              height: 32,
-              flex: 1,
               backgroundColor: "white",
-              paddingVertical: 40,
+              paddingVertical: 20,
+              paddingHorizontal: 24,
               borderRadius: 12,
               marginBottom: 12,
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "row",
             }}
-          ></ThemedView>
+          >
+            <ThemedText type="body" color="black">
+              앱 버전 확인
+            </ThemedText>
+            <Feather name="chevron-right" size={16} />
+          </ThemedView>
           <ThemedView
             style={{
-              height: 32,
-              flex: 1,
               backgroundColor: "white",
-              paddingVertical: 40,
+              paddingVertical: 20,
+              paddingHorizontal: 24,
               borderRadius: 12,
-              marginBottom: 24,
+              marginBottom: 12,
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexDirection: "row",
             }}
-          ></ThemedView>
-          <Button variant="filled" onPress={logout}>
-            로그아웃
-          </Button>
+          >
+            <ThemedText type="body" color="black">
+              언어 설정
+            </ThemedText>
+            <Feather name="chevron-right" size={16} />
+          </ThemedView>
+          <ThemedView
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Button variant="text" onPress={logout}>
+              로그아웃
+            </Button>
+          </ThemedView>
         </ThemedView>
       </ThemedView>
     </ThemedView>

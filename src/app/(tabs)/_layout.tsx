@@ -142,7 +142,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <ProfileIcon color={color} width={24} height={24} />
           ),
-          header: () => <AppBar />,
+          header: () => <AppBar align="center" title="프로필" />,
         }}
       />
       <Tabs.Screen
