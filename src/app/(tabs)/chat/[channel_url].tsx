@@ -114,7 +114,7 @@ export default function ChatScreen() {
       ? messages.filter((msg) => msg.user.role === "").slice(-1)[0]?.message
       : undefined;
 
-  const sys = lastAIMessage ? [lastAIMessage] : [];
+  const sys = lastAIMessage ? [lastAIMessage] : [""];
 
   return (
     <KeyboardAvoidingView

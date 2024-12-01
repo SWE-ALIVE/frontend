@@ -1,14 +1,14 @@
-import { StyleSheet } from "react-native";
-import { DateData } from "react-native-calendars";
-import { useState, useEffect } from "react";
-import { ThemedView } from "@/components/common/ThemedView";
-import { MarkedDates } from "@/types/record.types";
 import { CustomCalendar } from "@/components/analysis/CustomCalendar";
 import { DatePickerModal } from "@/components/analysis/DatePickerModal";
 import { RecordList } from "@/components/analysis/RecordsList";
-import { records } from "@/data/mocks/records";
-import { formatToday, getKSTDate } from "@/utils/date";
+import { ThemedView } from "@/components/common/ThemedView";
+import { getRecords } from "@/service/records.service";
+import { MarkedDates } from "@/types/record.types";
 import { createMarkedDates } from "@/utils/calendar";
+import { formatToday, getKSTDate } from "@/utils/date";
+import { useEffect, useState } from "react";
+import { StyleSheet } from "react-native";
+import { DateData } from "react-native-calendars";
 
 export default function AnalysisScreen() {
   const [selectedDate, setSelectedDate] = useState(formatToday());
@@ -16,7 +16,7 @@ export default function AnalysisScreen() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [markedDates, setMarkedDates] = useState<MarkedDates>({});
-
+  const records = getRecords();
   useEffect(() => {
     setMarkedDates(createMarkedDates(records, selectedDate));
   }, [selectedDate]);

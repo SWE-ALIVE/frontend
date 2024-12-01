@@ -29,7 +29,14 @@ export const ParticipatingChatRoom = (channel: Channel) => {
           />
           <ThemedView>
             <ThemedText type="callout">{name}</ThemedText>
-            <ThemedText type="footnote">{last_message.message}</ThemedText>
+            <ThemedText
+              type="footnote"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{ maxWidth: "80%" }}
+            >
+              {last_message.message}
+            </ThemedText>
           </ThemedView>
         </ThemedView>
         <ThemedView
@@ -38,22 +45,6 @@ export const ParticipatingChatRoom = (channel: Channel) => {
           <ThemedText type="footnote" color={Colors.light.lowGray}>
             {dayjs(last_message.created_at).format("HH:mm")}
           </ThemedText>
-          {unread_message_count > 0 && (
-            <ThemedView
-              style={{
-                backgroundColor: Colors.light.tint,
-                width: 16,
-                height: 16,
-                borderRadius: 999,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ThemedText type="footnote" style={{ color: "white" }}>
-                {unread_message_count}
-              </ThemedText>
-            </ThemedView>
-          )}
         </ThemedView>
       </ThemedView>
     </TouchableHighlight>
