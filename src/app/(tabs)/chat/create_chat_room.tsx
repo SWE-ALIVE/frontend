@@ -1,5 +1,6 @@
 import Aircontroller_stopped from "@/assets/images/aircon_gray.png";
 import dryer_stopped from "@/assets/images/dryer_gray.png";
+import purifier from "@/assets/images/purifier.png";
 import cleaner from "@/assets/images/robot(fill)1.png";
 import TV_bold from "@/assets/images/tv_gray.png";
 import washer from "@/assets/images/washer_gray.png";
@@ -129,8 +130,24 @@ const SelectDevice = ({
     <ThemedView style={styles.deviceContainer}>
       <ThemedView style={{ flexDirection: "row" }}>
         <ThemedView>
-          {device.category == "AIR_PURIFIER" ||
-          device.category == "AIR_CONDITIONER" ? (
+          {device.category == "AIR_PURIFIER" ? (
+            <>
+              {isSelected ? (
+                <Image
+                  source={{
+                    uri: "data:image/gif;base64,R0lGODlhoACgAIABAKUANP///yH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDkuMS1jMDAyIDc5LmYzNTRlZmM3MCwgMjAyMy8xMS8wOS0xMjowNTo1MyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpkOWY2N2QxMi1hODQ1LTQ5YjgtOGExMy02NWVjMzUyNzE2YjUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEQ2Rjc0QTNBN0JCMTFFRkE2MjNEMUZDQzk1NDk4NkQiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEQ2Rjc0QTJBN0JCMTFFRkE2MjNEMUZDQzk1NDk4NkQiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI1LjUgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1ZGZjMmJiMy01ZTBkLTQwNDItYTA0Ni1kNDJmN2Q4ZjY3MzIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6ZDlmNjdkMTItYTg0NS00OWI4LThhMTMtNjVlYzM1MjcxNmI1Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEBRQAAQAsAAAAAKAAoAAAAv+Mj6nL7Q+jnLTai7PevPsPhuJIluaJpurKtu4Lx/JM1/aN5/rO9/4PDAqHxKLxiEwql8ym8wmNSqfUqvWKzWq33K73Cw6Lx+Sy+YxOq9fstvsNj8vn9Lr9js+LAPy+/w8YKAh4N2h4iPg3l8jYKBjnGCnJ5zZp6ch2qcmotumJmPYp+ng2akpodqpKmbqq2upqChsrOkvraXurmatrydsr+QuMWTa8KWxMGpqc2MYM6vzJMPl2HEEc7TvRWE190VwZnAGdzb1x2I09bpjO6aDYwB7uPq2sMNhOfi+/H5iPvgBcAnzz9A00eMDeGnP9EAZQ2IneQYEIIC6jWFFiQn/NBQE29JgRVTmQIR1aRMPw48mTpTSWJKiS1UiSL0VOtLkwZUyZOwH84xfPzwOYmdRpAJrT6DekEZVaoHnR6TaoKL09dVhVmwSdTbUO5Rp1V0BxM58J7Wj2bNm0PtGybbs27c+3bt+qbWkXq5e8GMPw1dvlL9W9gomKKWzYL2KOZBYzHuMYp+LIfZAJtvwXM1/NeTnb9UxXj+jRpEubPo06terVrFu7fg07tuzZtGvbvo07t+7dvHv7/g08uPDhxIsbP448ufLlzJs7f+67AAAh+QQFFAABACxmAEcACQAYAAACHYyBGMmwrWCUD1Z2sNm8+w+G4khekyWl6moq7VYAACH5BAUUAAEALGwAQgAIABoAAAIiTICmCHrcHjSQyVlTbplOnyzOSJbmOUaOtbBXuMXybFVKAQAh+QQFFAABACxxAD8ACgAaAAACJIwPeZEN7ByMirZJcdQP9WUoYPiB5Yim6spOS8ZZ8kzXtqiBBQA7",
+                  }}
+                  style={styles.loadingImage}
+                  resizeMode="contain"
+                />
+              ) : (
+                <Image style={styles.loadingImage} source={purifier} />
+              )}
+            </>
+          ) : null}
+        </ThemedView>
+        <ThemedView>
+          {device.category == "AIR_CONDITIONER" ? (
             <>
               {isSelected ? (
                 <Image
