@@ -5,7 +5,7 @@ import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
 import { createChatRoom } from "@/service/chat.service";
 import { UserDevice } from "@/service/device.service";
-import { sendMessage } from "@/service/message.service";
+import { sendNormalMessage } from "@/service/message.service";
 import { useUserStore } from "@/stores/useUserStore";
 import Feather from "@expo/vector-icons/Feather";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -52,7 +52,7 @@ export default function CreateChatNameScreen() {
           message: "채팅을 시작합니다.",
         };
 
-        await sendMessage(messageBody);
+        await sendNormalMessage(messageBody);
         queryClient.refetchQueries({
           queryKey: ["channels"],
         });

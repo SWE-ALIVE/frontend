@@ -44,8 +44,7 @@ export default function ChatScreen() {
       });
       return response.messages;
     },
-    refetchInterval: 1000,
-    refetchIntervalInBackground: false,
+    refetchInterval: 3000,
   });
 
   const {
@@ -91,13 +90,13 @@ export default function ChatScreen() {
   }));
 
   const appendMessage = async (newMessage: Message) => {
-    queryClient.setQueryData(
-      ["messages", channel_url],
-      (oldData: Message[] | undefined) => {
-        if (!oldData) return [newMessage];
-        return [...oldData, newMessage];
-      }
-    );
+    // queryClient.setQueryData(
+    //   ["messages", channel_url],
+    //   (oldData: Message[] | undefined) => {
+    //     if (!oldData) return [newMessage];
+    //     return [...oldData, newMessage];
+    //   }
+    // );
     refetch();
   };
 
@@ -109,6 +108,13 @@ export default function ChatScreen() {
       toggle();
     };
   }, []);
+
+  const lastAIMessage =
+    messages && messages.length > 0
+      ? messages.filter((msg) => msg.user.role === "").slice(-1)[0]?.message
+      : undefined;
+
+  const sys = lastAIMessage ? [lastAIMessage] : [];
 
   return (
     <KeyboardAvoidingView
@@ -180,6 +186,7 @@ export default function ChatScreen() {
             message={message}
             setMessage={setMessage}
             appendMessage={appendMessage}
+            sys={sys}
           />
         </ThemedView>
         <ChatModal

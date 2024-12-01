@@ -36,7 +36,8 @@ export type DeviceCategory =
   | "AIR_PURIFIER"
   | "OVEN"
   | "KIMCHI_REFRIGERATOR"
-  | "VACUUM_CLEANER";
+  | "VACUUM_CLEANER"
+  | "ROBOT_CLEANER";
 interface ChatRoom {
   chatRoomName: string;
   chatRoomDevices: string[];

@@ -106,13 +106,17 @@ export default function ProfileScreen() {
             </ThemedText>
             <Feather name="chevron-right" size={16} />
           </ThemedView>
-          <ThemedView
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          <Button
+            variant="text"
+            onPress={logout}
+            style={{
+              marginTop: 32,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
-            <Button variant="text" onPress={logout}>
-              로그아웃
-            </Button>
-          </ThemedView>
+            로그아웃
+          </Button>
         </ThemedView>
       </ThemedView>
     </ThemedView>

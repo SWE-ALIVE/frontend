@@ -1,5 +1,10 @@
 import { Colors } from "@/constants/colors.constant";
-import { sendMessage } from "@/service/message.service";
+import {
+  AIMessageBody,
+  sendAIMessage,
+  sendNormalMessage,
+} from "@/service/message.service";
+import { useContextStore } from "@/stores/useContextStore";
 import { Message, MessageBody } from "@/types/chat";
 import { Feather } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,24 +21,37 @@ interface ChatInputProps {
   message: MessageBody;
   setMessage: React.Dispatch<React.SetStateAction<MessageBody>>;
   appendMessage: (newMessage: Message) => void;
+  sys: (string | undefined)[];
 }
 
 export const ChatInput = ({
   message,
   setMessage,
   appendMessage,
+  sys,
 }: ChatInputProps) => {
   const backgroundColorAnim = useRef(new Animated.Value(0)).current;
   const borderWidthAnim = useRef(new Animated.Value(0)).current;
   const queryClient = useQueryClient();
-
+  const { setContexts, contexts } = useContextStore();
   const sendChat = async () => {
     try {
       setMessage((prev) => ({ ...prev, message: "" }));
-      const res = await sendMessage(message);
-      appendMessage(res);
+      const AIMessage: AIMessageBody = {
+        channel_url: message.channel_url,
+        dialog: { sys: sys, usr: [message.message] },
+        slot_values: contexts,
+      };
+      const userRes = await sendNormalMessage(message);
+      appendMessage(userRes);
+      const aiRes = await sendAIMessage(AIMessage);
+
+      if (aiRes.context) {
+        setContexts(aiRes.context);
+      }
+
       queryClient.refetchQueries({
-        queryKey: ["channels"],
+        queryKey: ["channels", "messages"],
       });
     } catch (error) {
       console.log(error);

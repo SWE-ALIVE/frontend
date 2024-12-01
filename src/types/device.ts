@@ -18,6 +18,7 @@ export const DeviceIconMap: Record<DeviceCategory, React.FC<IconProps>> = {
   OVEN: () => null, // Add appropriate component
   KIMCHI_REFRIGERATOR: () => null, // Add appropriate component
   VACUUM_CLEANER: Cleaner, // Add appropriate component
+  ROBOT_CLEANER: Cleaner, // Add appropriate component
 };
 
 export const TranslateDeviceName: Record<keyof typeof DeviceIconMap, string> = {
@@ -31,6 +32,7 @@ export const TranslateDeviceName: Record<keyof typeof DeviceIconMap, string> = {
   OVEN: "오븐",
   KIMCHI_REFRIGERATOR: "김치냉장고",
   VACUUM_CLEANER: "진공청소기",
+  ROBOT_CLEANER: "로봇청소기",
 };
 
 export interface Device {
@@ -48,7 +50,8 @@ export type DeviceCategory =
   | "AIR_PURIFIER"
   | "OVEN"
   | "KIMCHI_REFRIGERATOR"
-  | "VACUUM_CLEANER";
+  | "VACUUM_CLEANER"
+  | "ROBOT_CLEANER";
 
 export interface Member {
   user_id: string;

@@ -4,8 +4,8 @@ import { Colors } from "@/constants/colors.constant";
 import { Message } from "@/types/chat";
 import React, { useCallback, useEffect, useRef } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
+import TypeAnimation from "../common/TypeAnimation";
 import { ChatBubble } from "./ChatBubble";
-
 interface ChatContainerProps {
   messages: Message[];
   deviceNicknames: string[];
@@ -39,9 +39,15 @@ const ChatContainer = ({
     scrollToBottom(100);
   }, [messages]);
 
-  const renderItem = useCallback(({ item }: { item: Message }) => {
+  const renderItem = ({ item }: { item: Message }) => {
     const isUser = item.user.role === "operator";
+    const isAI = item.user.role === "";
 
+    const lastAIMessage = messages
+      .filter((msg) => msg.user.role === "")
+      .slice(-1)[0];
+    const isLastAIMessage =
+      isAI && item.message_id === lastAIMessage?.message_id;
     return (
       <View
         key={item.message_id}
@@ -55,10 +61,53 @@ const ChatContainer = ({
             {item.user.nickname}
           </ThemedText>
         )}
-        <ChatBubble {...item} />
+        {isLastAIMessage && !item.message ? (
+          <ThemedText
+            style={{
+              flexDirection: "column",
+              paddingHorizontal: 20,
+              paddingVertical: 12,
+              borderRadius: 8,
+              maxWidth: "80%",
+              shadowColor: "rgba(0, 0, 0, 0.5)",
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowOpacity: 0.2,
+              shadowRadius: 3,
+              borderWidth: 1,
+              borderColor: Colors.light.tint,
+            }}
+          >
+            응답을 준비하고 있습니다...
+          </ThemedText>
+        ) : isLastAIMessage ? (
+          <TypeAnimation
+            text={item.message}
+            style={{
+              flexDirection: "column",
+              paddingHorizontal: 20,
+              paddingVertical: 12,
+              borderRadius: 8,
+              maxWidth: "80%",
+              shadowColor: "rgba(0, 0, 0, 0.5)",
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowOpacity: 0.2,
+              shadowRadius: 3,
+              borderWidth: 1,
+              borderColor: Colors.light.tint,
+            }}
+          />
+        ) : (
+          <ChatBubble {...item} />
+        )}
       </View>
     );
-  }, []);
+  };
 
   const ListHeaderComponent = useCallback(() => {
     return deviceNicknames ? (

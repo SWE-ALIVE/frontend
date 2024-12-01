@@ -1,4 +1,4 @@
-import { instance, sendbird_instance } from "./axios-instance";
+import { instance } from "./axios-instance";
 
 // export interface Channel {
 //   channel_url: string;
@@ -140,11 +140,7 @@ export interface MessageEvents {
 
 export const getChannels = async (userId: string): Promise<Root> => {
   try {
-    const response = await sendbird_instance.get(`/channels`, {
-      params: {
-        userId: userId,
-      },
-    });
+    const response = await instance.get(`/v1/channels/users/${userId}/details`);
     return response.data;
   } catch (error: any) {
     console.error("Error details:", {
@@ -158,7 +154,7 @@ export const getChannels = async (userId: string): Promise<Root> => {
 };
 
 export const getChatRoom = async (userId: string): Promise<UserChatRooms> => {
-  const response = await instance.get(`/v1/channels/${userId}`);
+  const response = await instance.get(`/v1/channels/users/${userId}`);
 
   return response.data;
 };
